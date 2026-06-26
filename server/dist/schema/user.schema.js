@@ -1,0 +1,25 @@
+import { z } from "zod";
+const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
+export const userSchema = z.object({
+    name: z.string().trim().min(3, "Name required"),
+    email: z.string().email("Invalid email address"),
+    phoneNo: z
+        .string()
+        .trim()
+        .length(11, "Phone number must be 11 digits")
+        .startsWith("0", "Phone number must start with 0"),
+    role: z.enum(["buyer", "farmer", "admin"]),
+    password: z.string().min(8, "Password must be at least 8 characters").refine((value) => /[a-z]/.test(value), {
+        message: "Password must contain at least one lowercase letter",
+    })
+        .refine((value) => /[A-Z]/.test(value), {
+        message: "Password must contain at least one uppercase letter",
+    })
+        .refine((value) => /[0-9]/.test(value), {
+        message: "Password must contain at least one number",
+    })
+        .refine((value) => specialCharRegex.test(value), {
+        message: "Password must contain at least one special character",
+    })
+});
+//# sourceMappingURL=user.schema.js.map

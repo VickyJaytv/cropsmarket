@@ -1,0 +1,40 @@
+{
+   "name": "cropsmarket backend",
+   "version": "0.0.1",
+   "description": "",
+   "type": "module",
+   "devDependencies": {
+      "@types/bcrypt": "^6.0.0",
+      "@types/cookie-parser": "^1.4.10",
+      "@types/express": "^5.0.6",
+      "@types/jsonwebtoken": "^9.0.10",
+      "@types/node": "^20.19.40",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.9.3",
+      "zod": "^4.4.3"
+   },
+   "dependencies": {
+      "bcrypt": "^6.0.0",
+      "cookie-parser": "^1.4.7",
+      "cors": "^2.8.6",
+      "dotenv": "^17.4.2",
+      "express": "^5.2.1",
+      "express-rate-limit": "^8.5.2",
+      "helmet": "^8.2.0",
+      "jsonwebtoken": "^9.0.3",
+      "morgan": "^1.11.0",
+      "mysql2": "^3.22.5",
+      "reflect-metadata": "^0.2.2",
+      "typeorm": "^1.0.0"
+   },
+   "scripts": {
+      "start": "ts-node src/index.ts",
+      "build": "tsc",
+      "server": "tsc && node --watch dist/index.js",
+      "typeorm": "typeorm-ts-node-esm"
+   },
+   "main": "index.js",
+   "keywords": [],
+   "author": "",
+   "license": "ISC"
+}
