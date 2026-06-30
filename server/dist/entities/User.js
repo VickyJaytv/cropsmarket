@@ -29,6 +29,10 @@ __decorate([
 __decorate([
     Column(),
     __metadata("design:type", String)
+], User.prototype, "phoneNumber", void 0);
+__decorate([
+    Column(),
+    __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
     Column(),

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Role } from "@/enums/role.enum.js";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class User {
@@ -11,11 +18,39 @@ export class User {
   @Column()
   lastName!: string;
 
-  @Column()
+  @Column({ unique: true })
   email!: number;
+
+  @Column({ unique: true })
+  phoneNumber!: string;
+
   @Column()
   password!: string;
 
-  @Column()
+  @Column({ type: "enum", enum: Role, default: Role.BUYER })
   role!: string;
+
+  @Column()
+  verificationToken!: string;
+
+  @Column({ type: "datetime" })
+  verificationTokenExpiresAt!: Date;
+
+  @Column()
+  passwordResetToken!: string;
+
+  @Column({ type: "datetime" })
+  passwordResetTokenExpiresAt!: Date;
+
+  @Column({ default: false })
+  isLoggedIn!: boolean;
+
+  @Column({ default: false })
+  isVerified!: boolean;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
