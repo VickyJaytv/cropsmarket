@@ -9,6 +9,7 @@ import { AppDataSource } from "./data-source.js";
 import { logger } from "./config/logger.js";
 import { authRoutes } from "./routes/auth.route.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
+import { buyerProfileRoutes } from "./routes/buyerProfile.route.js";
 
 const app = express();
 app.use(express.json());
@@ -24,7 +25,7 @@ AppDataSource.initialize()
   .then(() => {
     // Register routes AFTER database is initialized
     app.use("/api/auth", authRoutes);
-
+    app.use("/api/buyers", buyerProfileRoutes);
     // Register error middleware LAST
     app.use(errorMiddleware);
 

@@ -10,6 +10,7 @@ export const SignUpService = async ({
   phoneNumber,
   password,
   role,
+  accountType,
 }: SignupDTO) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -20,6 +21,7 @@ export const SignUpService = async ({
       email,
       phoneNumber,
       password: hashedPassword,
+      accountType,
       role,
     });
     return newUser;

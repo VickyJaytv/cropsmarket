@@ -4,13 +4,18 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from "typeorm";
-import { Role } from "../enums/role.enum.js";
+import { Role, AccountType } from "../enums/enums.js";
+import { BuyerProfile } from "./BuyerProfile.js";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @OneToOne(() => BuyerProfile, (buyerProfile) => buyerProfile.user)
+  buyerProfile!: BuyerProfile;
 
   @Column({ type: "varchar" })
   firstName!: string;
@@ -29,6 +34,12 @@ export class User {
 
   @Column({ type: "enum", enum: Role, default: Role.BUYER })
   role!: string;
+
+  @Column({
+    type: "enum",
+    enum: AccountType,
+  })
+  AccountType!: AccountType;
 
   @Column({ type: "varchar", nullable: true, default: null })
   passwordResetToken!: string;

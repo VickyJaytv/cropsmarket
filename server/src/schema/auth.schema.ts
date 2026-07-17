@@ -11,6 +11,7 @@ export const signUpSchema = z.object({
     .length(11, "Phone number must be 11 digits")
     .startsWith("0", "Phone number must start with 0"),
   role: z.enum(["buyer", "farmer", "admin"]),
+  accountType: z.enum(["individual", "business"]),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")

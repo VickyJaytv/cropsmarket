@@ -1,10 +1,10 @@
-import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import type { Request, Response, NextFunction } from "express";
+import { UserRepository } from "../repositories/user.repository.js";
 import { UserInterface } from "./../interfaces/user.interface.js";
 import { AppError } from "@/utils/AppError.js";
-import { UserRepository } from "@/repositories/user.repository.js";
 export interface AuthenticatedRequest extends Request {
-  user: UserInterface;
+  user?: UserInterface;
 }
 export const checkAuth = async (
   req: AuthenticatedRequest,
@@ -26,13 +26,11 @@ export const checkAuth = async (
     if (!verify) {
       throw new AppError("unauthorized invalid or expired token", 401);
     }
-    const user = await UserRepository.findOneBy({
-      id: Number(verify.userId),
-    });
+    const user = await UserRepository.findOneBy({ id: Number(verify.userId) });
     if (!user) {
       throw new AppError("user not found", 401);
     }
-    req.user = user;
+    req.user = user as unknown as UserInterface;
     next();
   } catch (error) {
     next(error);
