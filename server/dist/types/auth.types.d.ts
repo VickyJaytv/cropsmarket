@@ -1,17 +1,14 @@
 export interface SignupInterface {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    phoneNo: string;
+    phoneNumber: string;
     password: string;
-    confirmPassword: string;
     role: string;
 }
 export interface LoginInterface {
     email: string;
     password: string;
-}
-export interface confirmEmailInterface {
-    email: string;
 }
 export interface ForgotPassword {
     email: string;
@@ -19,7 +16,6 @@ export interface ForgotPassword {
 export interface ResetPassword {
     token: string;
     password: string;
-    confirmPassword: string;
 }
 export interface AuthResponse {
     token: string;

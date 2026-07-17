@@ -1,8 +1,9 @@
 import { z } from "zod";
-export declare const userSchema: z.ZodObject<{
-    name: z.ZodString;
+export declare const signUpSchema: z.ZodObject<{
+    firstName: z.ZodString;
+    lastName: z.ZodString;
     email: z.ZodString;
-    phoneNo: z.ZodString;
+    phoneNumber: z.ZodString;
     role: z.ZodEnum<{
         buyer: "buyer";
         farmer: "farmer";
@@ -10,5 +11,5 @@ export declare const userSchema: z.ZodObject<{
     }>;
     password: z.ZodString;
 }, z.core.$strip>;
-export type UserInput = z.infer<typeof userSchema>;
+export type SignupDTO = z.infer<typeof signUpSchema>;
 //# sourceMappingURL=user.schema.d.ts.map

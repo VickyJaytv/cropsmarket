@@ -1,4 +1,4 @@
 import { AppDataSource } from "../data-source.js";
-import { User } from "@/entities/User.js";
-export const UserEntity = AppDataSource.getRepository(User);
+import { User } from "../entities/User.js";
+export const UserRepository = AppDataSource.getRepository(User);
 //# sourceMappingURL=user.repository.js.map

@@ -1,7 +1,11 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { dirname } from "path";
+import { User } from "./entities/User.js";
+import { Product } from "./entities/Product.js";
+// import { Profile } from "./entities/Profile.js";
+// import { Listing } from "./entities/Listing.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const dbPassword = process.env.DB_PASSWORD || "";
@@ -17,8 +21,7 @@ export const AppDataSource = new DataSource({
     database: dbName,
     synchronize: true,
     logging: false,
-    entities: [join(__dirname, "/entities/**/*{.js,.ts}")],
+    entities: [User, Product],
     migrations: [],
-    subscribers: [],
 });
 //# sourceMappingURL=data-source.js.map

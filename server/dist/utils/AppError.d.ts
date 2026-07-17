@@ -1,5 +1,5 @@
 export declare class AppError extends Error {
-    status: number;
-    constructor(message: string, status: number);
+    statusCode: number;
+    constructor(message: string, statusCode: number);
 }
 //# sourceMappingURL=AppError.d.ts.map

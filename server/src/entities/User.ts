@@ -1,4 +1,3 @@
-import { Role } from "@/enums/role.enum.js";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,47 +5,39 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Role } from "../enums/role.enum.js";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   firstName!: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   lastName!: string;
 
-  @Column({ unique: true })
-  email!: number;
+  @Column({ type: "varchar", unique: true })
+  email!: string;
 
-  @Column({ unique: true })
+  @Column({ type: "varchar", unique: true })
   phoneNumber!: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   password!: string;
 
   @Column({ type: "enum", enum: Role, default: Role.BUYER })
   role!: string;
 
-  @Column()
-  verificationToken!: string;
-
-  @Column({ type: "datetime" })
-  verificationTokenExpiresAt!: Date;
-
-  @Column()
+  @Column({ type: "varchar", nullable: true, default: null })
   passwordResetToken!: string;
 
-  @Column({ type: "datetime" })
-  passwordResetTokenExpiresAt!: Date;
+  @Column({ type: "datetime", nullable: true, default: null })
+  passwordResetTokenExpiresAt!: Date | null;
 
-  @Column({ default: false })
+  @Column({ type: "boolean", default: false })
   isLoggedIn!: boolean;
-
-  @Column({ default: false })
-  isVerified!: boolean;
 
   @CreateDateColumn()
   createdAt!: Date;

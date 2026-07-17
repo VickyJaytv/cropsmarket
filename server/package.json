@@ -6,6 +6,7 @@
    "devDependencies": {
       "@types/bcrypt": "^6.0.0",
       "@types/cookie-parser": "^1.4.10",
+      "@types/cors": "^2.8.19",
       "@types/express": "^5.0.6",
       "@types/jsonwebtoken": "^9.0.10",
       "@types/node": "^20.19.40",
@@ -14,7 +15,9 @@
       "zod": "^4.4.3"
    },
    "dependencies": {
+      "@types/compression": "^1.8.1",
       "bcrypt": "^6.0.0",
+      "compression": "^1.8.1",
       "cookie-parser": "^1.4.7",
       "cors": "^2.8.6",
       "dotenv": "^17.4.2",
@@ -24,17 +27,21 @@
       "jsonwebtoken": "^9.0.3",
       "morgan": "^1.11.0",
       "mysql2": "^3.22.5",
+      "pino": "^10.3.1",
+      "pino-http": "^11.0.0",
+      "pino-pretty": "^13.1.3",
       "reflect-metadata": "^0.2.2",
+      "tsx": "^4.23.0",
       "typeorm": "^1.0.0"
    },
    "scripts": {
-      "start": "ts-node src/index.ts",
-      "build": "tsc",
-      "server": "tsc && node --watch dist/index.js",
+      "start": "tsx src/index.ts",
+      "build:watch": "tsc --watch",
+      "server": "node --watch dist/index.js",
       "typeorm": "typeorm-ts-node-esm"
    },
    "main": "index.js",
    "keywords": [],
-   "author": "",
+   "author": "temiloluwa tomilola david",
    "license": "ISC"
 }

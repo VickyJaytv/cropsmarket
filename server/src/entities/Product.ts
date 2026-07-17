@@ -1,8 +1,8 @@
 import {
-  Column,
-  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
 
@@ -11,22 +11,22 @@ export class Product {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   title!: string;
 
-  @Column({ unique: true })
+  @Column({ type: "varchar", unique: true })
   slug!: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   category!: string;
 
-  @Column()
+  @Column({ type: "text" })
   description!: string;
 
-  @Column()
+  @Column({ type: "varchar" })
   image!: string;
 
-  @Column({ default: true })
+  @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
   @CreateDateColumn()
