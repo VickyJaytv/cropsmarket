@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
 
 export const signUpSchema = z.object({
@@ -31,4 +31,9 @@ export const signUpSchema = z.object({
 
 export type SignupDTO = z.infer<typeof signUpSchema>;
 
-export type LoginDTO = Pick<SignupDTO, "email" | "password">;
+export const loginSchema = signUpSchema.pick({
+  email: true,
+  password: true,
+});
+
+export type LoginDTO = z.infer<typeof loginSchema>;

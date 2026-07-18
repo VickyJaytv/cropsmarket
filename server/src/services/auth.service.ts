@@ -3,6 +3,7 @@ import { UserRepository } from "../repositories/user.repository.js";
 import { LoginDTO, SignupDTO } from "../schema/auth.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { QueryFailedError } from "typeorm";
+import { PublicUserInterface } from "@/interfaces/user.interface.js";
 export const SignUpService = async ({
   firstName,
   lastName,
@@ -44,8 +45,14 @@ export const SignUpService = async ({
   }
 };
 
-export const LoginService = async ({ email, password }: LoginDTO) => {
-  const user = await UserRepository.findOne({ where: { email } });
+export const LoginService = async ({
+  email,
+  password,
+}: LoginDTO): Promise<PublicUserInterface> => {
+  const user = await UserRepository.createQueryBuilder("user")
+    .addSelect("user.password")
+    .where("user.email = :email", { email })
+    .getOne();
   if (!user) {
     throw new AppError("invalid email or password", 401);
   }

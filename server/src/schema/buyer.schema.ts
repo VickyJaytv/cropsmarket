@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 export const buyerSchema = z.object({
   profilePicture: z.string().url().nullable().optional(),
   bio: z.string().max(500).nullable().optional(),

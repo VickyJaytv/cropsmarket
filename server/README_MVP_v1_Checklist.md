@@ -4,7 +4,7 @@
 Validate that farmers can list produce and buyers can discover and contact them.
 
 ## Phase 1: Authentication
-- [ ] Phone number registration
+- [x] Phone number registration
 - [ ] SMS OTP verification
 - [x] Login
 - [x] JWT authentication
@@ -15,16 +15,17 @@ Validate that farmers can list produce and buyers can discover and contact them.
 
 ## Phase 2: User Profiles
 ### Farmer
-- [ ] Create profile
-- [ ] Edit profile
-- [ ] Farm name (optional)
-- [ ] State & LGA
-- [ ] Profile photo (optional)
+- [x] Create profile
+- [x] Edit profile
+- [x] Farm name (optional)
+- [x] State & LGA
+- [x] Profile photo (optional)
 
 ### Buyer
-- [ ] Create profile
-- [ ] Edit profile
-- [ ] Company/business name (optional)
+- [x] Create profile
+- [x] Edit profile
+- [x] Company/business name (optional)
+- [x] Profile photo (optional)
 
 ## Phase 3: Product Catalog (Admin Managed)
 - [ ] Create product
@@ -85,9 +86,9 @@ Listing fields:
 
 ## Phase 8: Security
 - [ ] Role-based access control
-- [ ] Request validation
-- [ ] Error handling
-- [ ] File upload validation
+- [x] Request validation
+- [x] Error handling
+- [x] File upload validation
 
 ## Phase 9: Deployment
 - [ ] Environment configuration

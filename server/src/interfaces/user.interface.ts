@@ -6,8 +6,13 @@ export interface UserInterface {
   password: string;
   phoneNumber: string;
   role: string;
+  passwordResetToken: string | null;
+  passwordResetTokenExpiresAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type PublicUserInterface = Omit<UserInterface, "password">;
+export type PublicUserInterface = Omit<
+  UserInterface,
+  "password" | "passwordResetToken" | "passwordResetTokenExpiresAt"
+>;

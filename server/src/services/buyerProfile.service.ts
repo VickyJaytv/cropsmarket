@@ -3,7 +3,7 @@ import {
   BuyerProfileDTO,
   UpdateBuyerProfileDTO,
 } from "../schema/buyer.schema.js";
-import { BuyerProfileRepository } from "../repositories/buyer-profile.repository.js";
+import { BuyerProfileRepository } from "../repositories/buyerProfile.repository.js";
 import { UserRepository } from "../repositories/user.repository.js";
 import { AppError } from "../utils/AppError.js";
 
@@ -40,8 +40,11 @@ export const createBuyerProfileService = async (
 export const getBuyerProfileService = async (userId: number) => {
   const personalProfile = await BuyerProfileRepository.findOneOrFail({
     where: { user: { id: userId } },
+    relations: {
+      user: true,
+    },
   });
-  return personalProfile;
+  return { ...personalProfile.user, profile: { personalProfile } };
 };
 export const updateBuyerProfileService = async (
   userId: number,

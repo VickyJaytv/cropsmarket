@@ -5,6 +5,7 @@ import { dirname, join } from "path";
 import { User } from "./entities/User.js";
 import { Product } from "./entities/Product.js";
 import { BuyerProfile } from "./entities/BuyerProfile.js";
+import { FarmerProfile } from "./entities/FarmerProfile.js";
 // import { Listing } from "./entities/Listing.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +25,6 @@ export const AppDataSource = new DataSource({
   database: dbName,
   synchronize: true,
   logging: false,
-  entities: [User, Product, BuyerProfile],
+  entities: [User, Product, BuyerProfile, FarmerProfile],
   migrations: [],
 });

@@ -4,7 +4,8 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { User } from "./entities/User.js";
 import { Product } from "./entities/Product.js";
-// import { Profile } from "./entities/Profile.js";
+import { BuyerProfile } from "./entities/BuyerProfile.js";
+import { FarmerProfile } from "./entities/FarmerProfile.js";
 // import { Listing } from "./entities/Listing.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,7 +22,7 @@ export const AppDataSource = new DataSource({
     database: dbName,
     synchronize: true,
     logging: false,
-    entities: [User, Product],
+    entities: [User, Product, BuyerProfile, FarmerProfile],
     migrations: [],
 });
 //# sourceMappingURL=data-source.js.map

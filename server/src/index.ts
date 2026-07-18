@@ -10,12 +10,15 @@ import { logger } from "./config/logger.js";
 import { authRoutes } from "./routes/auth.route.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { buyerProfileRoutes } from "./routes/buyerProfile.route.js";
+import { apiLimiter } from "./config/rate-limit.js";
+import { farmerProfileRoutes } from "./routes/farmerProfile.route.js";
 
 const app = express();
 app.use(express.json());
 app.use(compression());
 app.use(CookieParser());
 app.use(pinoHttp());
+app.use(apiLimiter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("<h1>Backend Running on port 8090</h1>");
@@ -23,12 +26,14 @@ app.get("/", (req: Request, res: Response) => {
 
 AppDataSource.initialize()
   .then(() => {
-    // Register routes AFTER database is initialized
-    app.use("/api/auth", authRoutes);
-    app.use("/api/buyers", buyerProfileRoutes);
-    // Register error middleware LAST
+    app.use("/api/v1/auth", authRoutes);
+    app.use("/api/v1/buyer", buyerProfileRoutes);
+    app.use("/api/v1/farmer", farmerProfileRoutes);
+
+    // error middleware LAST
     app.use(errorMiddleware);
 
+    // listen to server port
     app.listen(8090, () => console.log(`listening at http://localhost:8090`));
   })
   .catch((err: unknown) => {
