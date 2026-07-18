@@ -8,7 +8,7 @@ import { checkAuth } from "../middleware/auth.middleware.js";
 import express, { Router } from "express";
 export const buyerProfileRoutes: Router = express.Router();
 buyerProfileRoutes.post(
-  "/create",
+  "/profile",
   checkAuth,
   createBuyerProfileController,
   getPersonalBuyerProfileController,

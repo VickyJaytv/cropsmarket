@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { UserRepository } from "../repositories/user.repository.js";
 import { UserInterface } from "./../interfaces/user.interface.js";
 import { AppError } from "@/utils/AppError.js";
+import { Role } from "../enums/enums.js";
 export interface AuthenticatedRequest extends Request {
   user?: UserInterface;
 }
@@ -31,6 +32,22 @@ export const checkAuth = async (
       throw new AppError("user not found", 401);
     }
     req.user = user as unknown as UserInterface;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const adminOnly = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (req.user?.role !== Role.ADMIN) {
+      throw new AppError("forbidden", 403);
+    }
     next();
   } catch (error) {
     next(error);

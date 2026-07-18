@@ -7,16 +7,16 @@ import { checkAuth } from "../middleware/auth.middleware.js";
 import express, { Router } from "express";
 export const farmerProfileRoutes: Router = express.Router();
 farmerProfileRoutes.post(
-  "/create",
+  "/profile",
   checkAuth,
   createFarmerProfileController,
   getPersonalFarmerProfileController,
 );
 
-farmerProfileRoutes.get("/me", checkAuth, getPersonalFarmerProfileController);
-
-farmerProfileRoutes.patch(
-  "/update/me",
+farmerProfileRoutes.get(
+  "/profile",
   checkAuth,
-  updateFarmerProfileController,
+  getPersonalFarmerProfileController,
 );
+
+farmerProfileRoutes.patch("/profile", checkAuth, updateFarmerProfileController);

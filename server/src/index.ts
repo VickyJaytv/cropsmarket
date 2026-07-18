@@ -12,6 +12,7 @@ import { errorMiddleware } from "./middleware/error.middleware.js";
 import { buyerProfileRoutes } from "./routes/buyerProfile.route.js";
 import { apiLimiter } from "./config/rate-limit.js";
 import { farmerProfileRoutes } from "./routes/farmerProfile.route.js";
+import { adminRoutes } from "./admin/admin.route.js";
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,7 @@ AppDataSource.initialize()
     app.use("/api/v1/auth", authRoutes);
     app.use("/api/v1/buyer", buyerProfileRoutes);
     app.use("/api/v1/farmer", farmerProfileRoutes);
+    app.use("/api/v1/admin", adminRoutes);
 
     // error middleware LAST
     app.use(errorMiddleware);

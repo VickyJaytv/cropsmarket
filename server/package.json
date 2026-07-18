@@ -39,6 +39,7 @@
    },
    "scripts": {
       "start": "tsx src/index.ts",
+      "seed:admin":"tsx src/scripts/seed.ts",
       "build:watch": "tsc --watch",
       "server": "node --watch dist/index.js",
       "typeorm": "typeorm-ts-node-esm"

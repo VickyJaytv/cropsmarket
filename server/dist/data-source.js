@@ -6,7 +6,6 @@ import { User } from "./entities/User.js";
 import { Product } from "./entities/Product.js";
 import { BuyerProfile } from "./entities/BuyerProfile.js";
 import { FarmerProfile } from "./entities/FarmerProfile.js";
-// import { Listing } from "./entities/Listing.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const dbPassword = process.env.DB_PASSWORD || "";
