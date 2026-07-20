@@ -14,6 +14,12 @@ export enum Status {
   SUSPENDED = "suspended",
 }
 
+export enum ListingStatus {
+  ACTIVE = "active",
+  SOLD = "sold",
+  PAUSED = "paused",
+}
+
 export enum AccountType {
   INDIVIDUAL = "INDIVIDUAL",
   BUSINESS = "BUSINESS",

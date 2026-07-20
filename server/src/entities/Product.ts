@@ -4,7 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
 } from "typeorm";
+import { Category } from "./Category.js";
+import { Listing } from "./Listing.js";
 
 @Entity()
 export class Product {
@@ -12,22 +17,25 @@ export class Product {
   id!: number;
 
   @Column({ type: "varchar" })
-  title!: string;
+  name!: string;
 
   @Column({ type: "varchar", unique: true })
   slug!: string;
 
-  @Column({ type: "varchar" })
-  category!: string;
-
   @Column({ type: "text" })
   description!: string;
 
-  @Column({ type: "varchar" })
+  @Column({ type: "varchar", nullable: true })
   image!: string;
 
-  @Column({ type: "boolean", default: true })
-  isActive!: boolean;
+  @ManyToOne(() => Category, (category) => category.product, {
+    nullable: false,
+    onDelete: "RESTRICT",
+  })
+  @OneToMany(() => Listing, (listing) => listing.product)
+  listings!: Listing;
+  @JoinColumn({ name: "categoryId" })
+  category!: Category;
 
   @CreateDateColumn()
   createdAt!: Date;

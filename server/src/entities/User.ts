@@ -15,14 +15,6 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  // Relationship between user and buyer profile
-  @OneToOne(() => BuyerProfile, (buyerProfile) => buyerProfile.user)
-  buyerProfile!: BuyerProfile;
-
-  // Relationship between user and farmer profile
-  @OneToOne(() => FarmerProfile, (farmerProfile) => farmerProfile.user)
-  farmerProfile!: FarmerProfile;
-
   @Column({ type: "varchar" })
   firstName!: string;
 
@@ -39,7 +31,7 @@ export class User {
   password!: string;
 
   @Column({ type: "enum", enum: Role, default: Role.BUYER })
-  role!: string;
+  role!: Role;
 
   @Column({
     type: "enum",
@@ -51,10 +43,15 @@ export class User {
   passwordResetToken!: string | null;
 
   @Column({ type: "datetime", nullable: true })
-  passwordResetTokenExpiresAt!: Date | null ;
+  passwordResetTokenExpiresAt!: Date | null;
 
-  @Column({ type: "boolean", default: false })
-  isLoggedIn!: boolean;
+  // Relationship between user and buyer profile
+  @OneToOne(() => BuyerProfile, (buyerProfile) => buyerProfile.user)
+  buyerProfile!: BuyerProfile;
+
+  // Relationship between user and farmer profile
+  @OneToOne(() => FarmerProfile, (farmerProfile) => farmerProfile.user)
+  farmerProfile!: FarmerProfile;
 
   @CreateDateColumn()
   createdAt!: Date;
