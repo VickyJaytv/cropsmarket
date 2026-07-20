@@ -1,4 +1,4 @@
-import { string, z } from "zod";
+import { z } from "zod";
 const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
 
 export const signUpSchema = z.object({
@@ -9,8 +9,11 @@ export const signUpSchema = z.object({
     .string()
     .trim()
     .length(11, "Phone number must be 11 digits")
-    .startsWith("0", "Phone number must start with 0"),
-  role: z.enum(["buyer", "farmer", "admin"]),
+    .startsWith("0", "Phone number must start with 0")
+    .regex(/^\d{10,15}$/, "Invalid phone number"),
+  role: z.enum(["buyer", "farmer", "admin"], {
+    error: () => ({ message: "invalid role selection" }),
+  }),
   accountType: z.enum(["individual", "business"]),
   password: z
     .string()
