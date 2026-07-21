@@ -1,17 +1,18 @@
 import {
   Entity,
   Column,
-  OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from "typeorm";
 import { Product } from "./Product.js";
+import { User } from "./User.js";
 
 @Entity()
 export class Category {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ type: "varchar", unique: true })
@@ -21,13 +22,16 @@ export class Category {
   slug!: string;
 
   @Column({ type: "varchar", nullable: true })
-  image!: string;
+  image!: string | null;
 
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
   @OneToMany(() => Product, (product) => product.category)
   product!: Product[];
+
+  @ManyToOne(() => User, (user) => user.categories)
+  admin!: User;
 
   @CreateDateColumn()
   createdAt!: Date;

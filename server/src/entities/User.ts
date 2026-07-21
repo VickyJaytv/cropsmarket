@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  OneToMany,
 } from "typeorm";
 import { Role, AccountType } from "../enums/enums.js";
 import { BuyerProfile } from "./BuyerProfile.js";
 import { FarmerProfile } from "./FarmerProfile.js";
+import { Category } from "./Category.js";
 
 @Entity()
 export class User {
@@ -52,6 +54,9 @@ export class User {
   // Relationship between user and farmer profile
   @OneToOne(() => FarmerProfile, (farmerProfile) => farmerProfile.user)
   farmerProfile!: FarmerProfile;
+
+  @OneToMany(() => Category, (category) => category.admin)
+  categories!: Category[];
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -6,6 +6,7 @@ import {
 import { BuyerProfileRepository } from "../repositories/buyerProfile.repository.js";
 import { UserRepository } from "../repositories/user.repository.js";
 import { AppError } from "../utils/AppError.js";
+import { Role } from "../enums/enums.js";
 
 export const createBuyerProfileService = async (
   userId: number,
@@ -14,6 +15,7 @@ export const createBuyerProfileService = async (
   try {
     const user = await UserRepository.findOneByOrFail({
       id: userId,
+      role: Role.BUYER,
     });
 
     const buyerProfile = BuyerProfileRepository.create({

@@ -6,6 +6,7 @@ import {
 import { FarmerProfileRepository } from "../repositories/farmerProfile.repository.js";
 import { UserRepository } from "../repositories/user.repository.js";
 import { AppError } from "../utils/AppError.js";
+import { Role } from "../enums/enums.js";
 
 export const createFarmerProfileService = async (
   userId: number,
@@ -14,6 +15,7 @@ export const createFarmerProfileService = async (
   try {
     const user = await UserRepository.findOneByOrFail({
       id: userId,
+      role: Role.FARMER,
     });
 
     const farmerProfile = FarmerProfileRepository.create({
