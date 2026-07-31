@@ -1,3 +1,4 @@
+import { AccountType, Role } from "@/enums/enums.js";
 import { z } from "zod";
 const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
 
@@ -11,10 +12,10 @@ export const signUpSchema = z.object({
     .length(11, "Phone number must be 11 digits")
     .startsWith("0", "Phone number must start with 0")
     .regex(/^\d{10,15}$/, "Invalid phone number"),
-  role: z.enum(["buyer", "farmer", "admin"], {
+  role: z.enum([Role.ADMIN, Role.BUYER, Role.FARMER], {
     error: () => ({ message: "invalid role selection" }),
   }),
-  accountType: z.enum(["individual", "business"]),
+  accountType: z.enum([AccountType.INDIVIDUAL, AccountType.BUSINESS]),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")

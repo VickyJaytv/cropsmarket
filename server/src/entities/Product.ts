@@ -23,17 +23,20 @@ export class Product {
   slug!: string;
 
   @Column({ type: "text", nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: "varchar", nullable: true })
-  image!: string;
+  image!: string | null;
 
-  @ManyToOne(() => Category, (category) => category.product, {
+  @Column({ type: "boolean", default: true })
+  isActive!: boolean;
+
+  @ManyToOne(() => Category, (category) => category.products, {
     nullable: false,
     onDelete: "RESTRICT",
   })
-  @OneToMany(() => Listing, (listing) => listing.product)
-  listings!: Listing;
+  // @OneToMany(() => Listing, (listing) => listing.product)
+  // listings!: Listing;
   @JoinColumn({ name: "categoryId" })
   category!: Category;
 

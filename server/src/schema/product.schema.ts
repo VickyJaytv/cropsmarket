@@ -5,6 +5,8 @@ export const productSchema = z.object({
     .trim()
     .min(2, "product name must be a minimum of two characters"),
 
-  description: z.string().trim().optional,
-  image: z.string().url("invalid image url").nullable().optional(),
+  description: z.string().trim().optional(),
+  image: z.string().url("invalid image url").optional(),
 });
+
+export type CreateProductDTO = z.infer<typeof productSchema>;

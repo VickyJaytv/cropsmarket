@@ -2,20 +2,18 @@ import { ListingStatus } from "@/enums/enums.js";
 import {
   Entity,
   Column,
-  OneToOne,
-  PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { FarmerProfile } from "./FarmerProfile.js";
 import { Product } from "./Product.js";
 
 @Entity()
 export class Listing {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ type: "varchar" })

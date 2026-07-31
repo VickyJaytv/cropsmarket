@@ -1,3 +1,4 @@
+import { authorize } from "@/middleware/role.middleware.js";
 import {
   createFarmerProfileController,
   getPersonalFarmerProfileController,
@@ -5,10 +6,12 @@ import {
 } from "../controllers/farmerProfile.controller.js";
 import { checkAuth } from "../middleware/auth.middleware.js";
 import express, { Router } from "express";
+import { Role } from "../enums/enums.js";
 export const farmerProfileRoutes: Router = express.Router();
 farmerProfileRoutes.post(
   "/profile",
   checkAuth,
+  authorize(Role.FARMER),
   createFarmerProfileController,
   getPersonalFarmerProfileController,
 );
@@ -16,7 +19,13 @@ farmerProfileRoutes.post(
 farmerProfileRoutes.get(
   "/profile",
   checkAuth,
+  authorize(Role.FARMER),
   getPersonalFarmerProfileController,
 );
 
-farmerProfileRoutes.patch("/profile", checkAuth, updateFarmerProfileController);
+farmerProfileRoutes.patch(
+  "/profile",
+  checkAuth,
+  authorize(Role.FARMER),
+  updateFarmerProfileController,
+);

@@ -28,7 +28,7 @@ export class Category {
   isActive!: boolean;
 
   @OneToMany(() => Product, (product) => product.category)
-  product!: Product[];
+  products!: Product[];
 
   @ManyToOne(() => User, (user) => user.categories)
   admin!: User;

@@ -1,3 +1,5 @@
+import { Role } from "../enums/enums.js";
+
 export interface UserInterface {
   id: number;
   firstName: string;
@@ -5,7 +7,7 @@ export interface UserInterface {
   email: string;
   password: string;
   phoneNumber: string;
-  role: string;
+  role: Role;
   passwordResetToken: string | null;
   passwordResetTokenExpiresAt: Date | null;
   createdAt: Date;

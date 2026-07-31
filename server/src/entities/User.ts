@@ -39,7 +39,7 @@ export class User {
     type: "enum",
     enum: AccountType,
   })
-  AccountType!: AccountType;
+  accountType!: AccountType;
 
   @Column({ type: "varchar", nullable: true })
   passwordResetToken!: string | null;

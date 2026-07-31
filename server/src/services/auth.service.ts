@@ -4,27 +4,15 @@ import { LoginDTO, SignupDTO } from "../schema/auth.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { QueryFailedError } from "typeorm";
 import { PublicUserInterface } from "@/interfaces/user.interface.js";
-export const SignUpService = async ({
-  firstName,
-  lastName,
-  email,
-  phoneNumber,
-  password,
-  role,
-  accountType,
-}: SignupDTO) => {
+export const SignUpService = async (data: SignupDTO) => {
   try {
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    const newUser = await UserRepository.save({
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
+    const newUser = await UserRepository.create({
+      ...data,
       password: hashedPassword,
-      accountType,
-      role,
     });
+    await UserRepository.save(newUser);
     return newUser;
   } catch (err) {
     if (err instanceof QueryFailedError) {
@@ -60,7 +48,6 @@ export const LoginService = async ({
   if (!passwordMatch) {
     throw new AppError("invalid email or password", 401);
   }
-  user.isLoggedIn = true;
   const saveUser = await UserRepository.save(user);
   return saveUser;
 };
@@ -70,9 +57,4 @@ export const logoutService = async (userId: number) => {
   if (!user) {
     throw new AppError("if you were logged in, you've been logged out", 200);
   }
-
-  const saveUser = await UserRepository.update(userId, {
-    isLoggedIn: false,
-  });
-  return saveUser;
 };

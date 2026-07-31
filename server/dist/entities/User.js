@@ -7,24 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany, } from "typeorm";
 import { Role, AccountType } from "../enums/enums.js";
 import { BuyerProfile } from "./BuyerProfile.js";
 import { FarmerProfile } from "./FarmerProfile.js";
+import { Category } from "./Category.js";
 let User = class User {
 };
 __decorate([
     PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
-__decorate([
-    OneToOne(() => BuyerProfile, (buyerProfile) => buyerProfile.user),
-    __metadata("design:type", BuyerProfile)
-], User.prototype, "buyerProfile", void 0);
-__decorate([
-    OneToOne(() => FarmerProfile, (farmerProfile) => farmerProfile.user),
-    __metadata("design:type", FarmerProfile)
-], User.prototype, "farmerProfile", void 0);
 __decorate([
     Column({ type: "varchar" }),
     __metadata("design:type", String)
@@ -65,9 +58,17 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "passwordResetTokenExpiresAt", void 0);
 __decorate([
-    Column({ type: "boolean", default: false }),
-    __metadata("design:type", Boolean)
-], User.prototype, "isLoggedIn", void 0);
+    OneToOne(() => BuyerProfile, (buyerProfile) => buyerProfile.user),
+    __metadata("design:type", BuyerProfile)
+], User.prototype, "buyerProfile", void 0);
+__decorate([
+    OneToOne(() => FarmerProfile, (farmerProfile) => farmerProfile.user),
+    __metadata("design:type", FarmerProfile)
+], User.prototype, "farmerProfile", void 0);
+__decorate([
+    OneToMany(() => Category, (category) => category.admin),
+    __metadata("design:type", Array)
+], User.prototype, "categories", void 0);
 __decorate([
     CreateDateColumn(),
     __metadata("design:type", Date)

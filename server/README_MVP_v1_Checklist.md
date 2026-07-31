@@ -27,14 +27,22 @@ Validate that farmers can list produce and buyers can discover and contact them.
 - [x] Company/business name (optional)
 - [x] Profile photo (optional)
 
-## Phase 3: Product Catalog (Admin Managed)
-- [ ] Create product
+## Phase 3: Category (Admin Managed)
+- [x] Create category
+- [x] Search Category(query)
+- [x] Update category
+- [x] Delete category
+- [x] View categories
+<!-- - [ ] Enable/disable category -->
+
+## Phase 4: Product Catalog (Admin Managed)
+- [x] Create product
 - [ ] Update product
 - [ ] Delete product
-- [ ] View products
+- [x] View products
 - [ ] Enable/disable product
 
-## Phase 4: Listings
+## Phase 5: Listings
 - [ ] Create listing
 - [ ] Upload images
 - [ ] Edit listing
@@ -52,7 +60,7 @@ Listing fields:
 - Location
 - Availability
 
-## Phase 5: Marketplace
+## Phase 6: Marketplace
 - [ ] Browse listings
 - [ ] View listing details
 - [ ] Search by product
@@ -61,12 +69,12 @@ Listing fields:
 - [ ] Filter by price
 - [ ] Filter by availability
 
-## Phase 6: Buyer Inquiry
+## Phase 7: Buyer Inquiry
 - [ ] Contact farmer via WhatsApp
 - [ ] Record inquiry
 - [ ] View inquiry history
 
-## Phase 7: Dashboards
+## Phase 8: Dashboards
 ### Farmer Dashboard
 - [ ] Overview
 - [ ] Active listings
@@ -84,13 +92,13 @@ Listing fields:
 - [ ] Listing moderation
 - [ ] Platform statistics
 
-## Phase 8: Security
+## Phase 9: Security
 - [ ] Role-based access control
 - [x] Request validation
 - [x] Error handling
 - [x] File upload validation
 
-## Phase 9: Deployment
+## Phase 10: Deployment
 - [ ] Environment configuration
 - [ ] Database migration
 - [ ] Backend deployment
