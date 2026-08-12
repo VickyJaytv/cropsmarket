@@ -1,5 +1,8 @@
 import { Response, NextFunction } from "express";
-import { listingFilterSchema, listingSchema } from "../schema/listing.schema.js";
+import {
+  listingFilterSchema,
+  listingSchema,
+} from "../schema/listing.schema.js";
 import { AppError } from "../utils/AppError.js";
 import {
   createListingService,
@@ -149,13 +152,16 @@ export const getAllListingsController = async (
       parsed.maxQuantity !== undefined &&
       parsed.minQuantity > parsed.maxQuantity
     ) {
-      throw new AppError("minQuantity cannot be greater than maxQuantity.", 400);
+      throw new AppError(
+        "minQuantity cannot be greater than maxQuantity.",
+        400,
+      );
     }
 
     const listings = await getAllListingsService(parsed.page, parsed.limit, {
       ...parsed,
-      page: undefined,
-      limit: undefined,
+      page: parsed.page,
+      limit: parsed.limit,
     });
 
     return res.status(200).json({

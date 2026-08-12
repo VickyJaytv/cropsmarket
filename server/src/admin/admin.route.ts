@@ -1,6 +1,9 @@
 import express, { Router } from "express";
 import { checkAuth, adminOnly } from "../middleware/auth.middleware.js";
-import { getUserByIdController, getUsersController } from "./admin.controller.js";
+import {
+  getUserByIdController,
+  getUsersController,
+} from "./admin.controller.js";
 import { getAllListingsController } from "../controllers/listing.controller.js";
 import { deleteListingController } from "../controllers/listing.controller.js";
 export const adminRoutes: Router = express();

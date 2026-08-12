@@ -8,8 +8,8 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { Category } from "./Category.js";
-import { Listing } from "./Listing.js";
+import type { Category } from "./Category.js";
+import type { Listing } from "./Listing.js";
 
 @Entity()
 export class Product {
@@ -31,14 +31,15 @@ export class Product {
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
-  @ManyToOne(() => Category, (category) => category.products, {
+  @ManyToOne("Category", (category: Category) => category.products, {
     nullable: false,
     onDelete: "RESTRICT",
   })
-  @OneToMany(() => Listing, (listing) => listing.product)
-  listings!: Listing;
   @JoinColumn({ name: "categoryId" })
   category!: Category;
+
+  @OneToMany("Listing", (listing: Listing) => listing.product)
+  listings!: Listing[];
 
   @CreateDateColumn()
   createdAt!: Date;

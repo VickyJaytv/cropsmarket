@@ -7,14 +7,14 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User.js";
+import type { User } from "./User.js";
 
 @Entity()
 export class BuyerProfile {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToOne(() => User, (user) => user.buyerProfile)
+  @OneToOne("User", (user: User) => user.buyerProfile)
   @JoinColumn({ name: "userId" })
   user!: User;
 

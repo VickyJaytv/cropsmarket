@@ -8,19 +8,19 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { FarmerProfile } from "./FarmerProfile.js";
-import { Product } from "./Product.js";
+import type { FarmerProfile } from "./FarmerProfile.js";
+import type { Product } from "./Product.js";
 
 @Entity()
 export class Listing {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Product, (product) => product.listings)
+  @ManyToOne("Product", (product: Product) => product.listings)
   @JoinColumn({ name: "productId" })
   product!: Product;
 
-  @ManyToOne(() => FarmerProfile, (farmer) => farmer.listing)
+  @ManyToOne("FarmerProfile", (farmer: FarmerProfile) => farmer.listing)
   @JoinColumn({ name: "farmerId" })
   farmer!: FarmerProfile;
 

@@ -8,6 +8,7 @@ import {
 } from "../schema/listing.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { UserRepository } from "../repositories/user.repository.js";
+import { ListingStatus } from "../enums/enums.js";
 
 export const createListingService = async (
   productId: number,
@@ -19,11 +20,19 @@ export const createListingService = async (
   if (!product) {
     throw new AppError("product not found", 404);
   }
-  const newListing = await ListingRepository.create({
-    ...data,
+
+  const newListing = ListingRepository.create({
+    quantity: data.quantity,
+    unit: data.unit,
+    price: data.price,
+    description: data.description ?? data.desc ?? null,
+    location: data.location,
+    image: data.image ?? null,
+    status: (data.status ?? ListingStatus.ACTIVE) as ListingStatus,
     product,
     isAvailable: true,
   });
+
   return await ListingRepository.save(newListing);
 };
 
@@ -31,7 +40,7 @@ export const getPersonalListingsService = async (
   page: number,
   limit: number,
   userId: number,
-  filters: FilterListingDTO = {},
+  filters: Partial<FilterListingDTO> = {},
 ) => {
   const query = ListingRepository.createQueryBuilder("listing")
     .leftJoinAndSelect("listing.farmer", "farmer")
@@ -100,45 +109,6 @@ export const getListingByIdService = async (listingId: number) => {
     .leftJoinAndSelect("listing.farmer", "farmer")
     .leftJoinAndSelect("farmer.user", "user")
     .where("listing.id = :listingId", { listingId })
-    .select([
-      "listing.id",
-      "listing.quantity",
-      "listing.unit",
-      "listing.price",
-      "listing.description",
-      "listing.location",
-      "listing.isAvailable",
-      "listing.image",
-      "listing.status",
-      "listing.createdAt",
-      "listing.updatedAt",
-      "product.id",
-      "product.name",
-      "product.description",
-      "product.image",
-      "product.isActive",
-      "product.createdAt",
-      "product.updatedAt",
-      "category.id",
-      "category.name",
-      "category.slug",
-      "category.isActive",
-      "farmer.id",
-      "farmer.profilePicture",
-      "farmer.farmName",
-      "farmer.address",
-      "farmer.state",
-      "farmer.lga",
-      "user.id",
-      "user.firstName",
-      "user.lastName",
-      "user.email",
-      "user.phoneNumber",
-      "user.role",
-      "user.accountType",
-      "user.createdAt",
-      "user.updatedAt",
-    ])
     .getOne();
 
   if (!listing) {
@@ -151,7 +121,7 @@ export const getListingByIdService = async (listingId: number) => {
 export const getAllListingsService = async (
   page: number,
   limit: number,
-  filters: FilterListingDTO = {},
+  filters: Partial<FilterListingDTO> = {},
 ) => {
   const query = ListingRepository.createQueryBuilder("listing")
     .leftJoinAndSelect("listing.product", "product")
@@ -217,10 +187,22 @@ export const getAllListingsService = async (
     );
   }
 
-  const sortBy = filters.sortBy ?? "createdAt";
-  const sortOrder = (filters.sortOrder ?? "DESC").toUpperCase();
+  const allowedSortFields = [
+    "createdAt",
+    "price",
+    "quantity",
+    "updatedAt",
+  ] as const;
 
-  query.orderBy(`listing.${sortBy}`, sortOrder === "ASC" ? "ASC" : "DESC");
+  const sortBy = allowedSortFields.includes(
+    filters.sortBy as (typeof allowedSortFields)[number],
+  )
+    ? filters.sortBy
+    : "createdAt";
+
+  const sortOrder = filters.sortOrder === "ASC" ? "ASC" : "DESC";
+
+  query.orderBy(`listing.${sortBy}`, sortOrder);
 
   query.skip((page - 1) * limit).take(limit);
 

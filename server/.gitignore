@@ -4,3 +4,12 @@ node_modules/
 build/
 tmp/
 temp/
+
+# Tests
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+__tests__/
+coverage/
+jest.config.cjs

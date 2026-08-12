@@ -8,8 +8,8 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { User } from "./User.js";
-import { Listing } from "./Listing.js";
+import type { User } from "./User.js";
+import type { Listing } from "./Listing.js";
 
 @Entity()
 export class FarmerProfile {
@@ -17,13 +17,13 @@ export class FarmerProfile {
   id!: number;
 
   // user to farmer profile relationship
-  @OneToOne(() => User, (user) => user.farmerProfile)
+  @OneToOne("User", (user: User) => user.farmerProfile)
   @JoinColumn({ name: "userId" })
   user!: User;
 
-  @OneToMany(() => Listing, (listing) => listing.farmer)
+  @OneToMany("Listing", (listing: Listing) => listing.farmer)
   @JoinColumn({ name: "listingId" })
-  listing!: Listing;
+  listing!: Listing[];
 
   @Column({ type: "varchar", nullable: true })
   profilePicture!: string | null;
