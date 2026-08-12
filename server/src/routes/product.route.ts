@@ -20,19 +20,8 @@ productRoutes.post(
   authorize(Role.FARMER),
   createListingController,
 );
-productRoutes.get(
-  "/",
-  checkAuth,
-  authorize(Role.FARMER, Role.ADMIN),
-  getProductController,
-);
-
-productRoutes.get(
-  "/:productId",
-  checkAuth,
-  authorize(Role.FARMER, Role.ADMIN),
-  getProductByIdController,
-);
+productRoutes.get("/", getProductController);
+productRoutes.get("/:productId", getProductByIdController);
 
 productRoutes.patch(
   "/:id",

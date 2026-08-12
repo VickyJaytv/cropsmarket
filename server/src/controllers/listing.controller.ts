@@ -21,19 +21,23 @@ export const createListingController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const productId = Number(req.params.productId);
-  if (Number.isNaN(productId) || productId <= 0) {
-    throw new AppError("Invalid Category", 400);
-  }
-  const validateData = listingSchema.parse(req.body);
-  const listingData = {
-    ...validateData,
-    ...(req.file && {
-      image: `/uploads/listing/${req.file.filename}`,
-    }),
-  };
   try {
-    const listing = await createListingService(productId, listingData);
+    const productId = Number(req.params.productId);
+    if (Number.isNaN(productId) || productId <= 0) {
+      throw new AppError("Invalid Product ID", 400);
+    }
+    const userId = Number(req.user?.id);
+    if (!userId) {
+      throw new AppError("Unauthorized", 401);
+    }
+    const validateData = listingSchema.parse(req.body);
+    const listingData = {
+      ...validateData,
+      ...(req.file && {
+        image: `/uploads/listing/${req.file.filename}`,
+      }),
+    };
+    const listing = await createListingService(productId, userId, listingData);
     res.status(201).json({
       success: true,
       message: "listing successfully created",

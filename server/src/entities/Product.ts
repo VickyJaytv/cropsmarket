@@ -8,8 +8,8 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import type { Category } from "./Category.js";
-import type { Listing } from "./Listing.js";
+import { Category } from "./Category.js";
+import { Listing } from "./Listing.js";
 
 @Entity()
 export class Product {
@@ -38,7 +38,7 @@ export class Product {
   @JoinColumn({ name: "categoryId" })
   category!: Category;
 
-  @OneToMany("Listing", (listing: Listing) => listing.product)
+  @OneToMany(() => Listing, (listing) => listing.product)
   listings!: Listing[];
 
   @CreateDateColumn()

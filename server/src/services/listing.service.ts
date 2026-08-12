@@ -7,11 +7,12 @@ import {
   UpdateListingDTO,
 } from "../schema/listing.schema.js";
 import { AppError } from "../utils/AppError.js";
-import { UserRepository } from "../repositories/user.repository.js";
+import { FarmerProfileRepository } from "../repositories/farmerProfile.repository.js";
 import { ListingStatus } from "../enums/enums.js";
 
 export const createListingService = async (
   productId: number,
+  userId: number,
   data: CreateListingDTO,
 ) => {
   const product = await ProductRepository.findOne({
@@ -21,15 +22,26 @@ export const createListingService = async (
     throw new AppError("product not found", 404);
   }
 
+  const farmer = await FarmerProfileRepository.findOne({
+    where: { user: { id: userId } },
+  });
+  if (!farmer) {
+    throw new AppError(
+      "Farmer profile not found. Please complete farmer profile first.",
+      400,
+    );
+  }
+
   const newListing = ListingRepository.create({
     quantity: data.quantity,
     unit: data.unit,
     price: data.price,
-    description: data.description ?? data.desc ?? null,
+    description: data.description ?? null,
     location: data.location,
     image: data.image ?? null,
     status: (data.status ?? ListingStatus.ACTIVE) as ListingStatus,
     product,
+    farmer,
     isAvailable: true,
   });
 
@@ -220,9 +232,13 @@ export const getAllListingsService = async (
 };
 
 export const searchListingService = async (query: string) => {
-  return await ListingRepository.find({
-    where: { product: ILike(`%${query}%`) },
-  });
+  return await ListingRepository.createQueryBuilder("listing")
+    .leftJoinAndSelect("listing.product", "product")
+    .leftJoinAndSelect("product.category", "category")
+    .leftJoinAndSelect("listing.farmer", "farmer")
+    .leftJoinAndSelect("farmer.user", "user")
+    .where("product.name LIKE :query", { query: `%${query}%` })
+    .getMany();
 };
 
 export const updateListingService = async (

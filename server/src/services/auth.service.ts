@@ -12,8 +12,14 @@ export const SignUpService = async (data: SignupDTO) => {
       ...data,
       password: hashedPassword,
     });
-    await UserRepository.save(newUser);
-    return newUser;
+    const savedUser = await UserRepository.save(newUser);
+    const {
+      password: _p,
+      passwordResetToken: _prt,
+      passwordResetTokenExpiresAt: _prte,
+      ...sanitizedUser
+    } = savedUser;
+    return sanitizedUser;
   } catch (err) {
     if (err instanceof QueryFailedError) {
       const driverError = (
@@ -48,13 +54,20 @@ export const LoginService = async ({
   if (!passwordMatch) {
     throw new AppError("invalid email or password", 401);
   }
-  const saveUser = await UserRepository.save(user);
-  return saveUser;
+  const {
+    password: _p,
+    passwordResetToken: _prt,
+    passwordResetTokenExpiresAt: _prte,
+    ...sanitizedUser
+  } = user;
+  return sanitizedUser as PublicUserInterface;
 };
 
 export const logoutService = async (userId: number) => {
   const user = await UserRepository.findOne({ where: { id: userId } });
   if (!user) {
-    throw new AppError("if you were logged in, you've been logged out", 200);
+    throw new AppError("User not found", 404);
   }
+  user.tokenVersion = (user.tokenVersion || 1) + 1;
+  await UserRepository.save(user);
 };

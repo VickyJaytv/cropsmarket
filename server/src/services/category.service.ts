@@ -66,6 +66,15 @@ export const updateCategoryService = async (
 };
 
 export const deleteCategoryService = async (categoryId: number) => {
-  const category = await CategoryRepository.findOneByOrFail({ id: categoryId });
+  const category = await CategoryRepository.findOne({
+    where: { id: categoryId },
+    relations: { products: true },
+  });
+  if (!category) {
+    throw new AppError("Category not found.", 404);
+  }
+  if (category.products && category.products.length > 0) {
+    throw new AppError("Category cannot be deleted while products exist.", 400);
+  }
   return await CategoryRepository.remove(category);
 };

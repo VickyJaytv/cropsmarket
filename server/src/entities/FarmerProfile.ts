@@ -22,7 +22,6 @@ export class FarmerProfile {
   user!: User;
 
   @OneToMany("Listing", (listing: Listing) => listing.farmer)
-  @JoinColumn({ name: "listingId" })
   listing!: Listing[];
 
   @Column({ type: "varchar", nullable: true })

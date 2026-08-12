@@ -16,11 +16,17 @@ export class Listing {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne("Product", (product: Product) => product.listings)
+  @ManyToOne("Product", (product: Product) => product.listings, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "productId" })
   product!: Product;
 
-  @ManyToOne("FarmerProfile", (farmer: FarmerProfile) => farmer.listing)
+  @ManyToOne("FarmerProfile", (farmer: FarmerProfile) => farmer.listing, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
   @JoinColumn({ name: "farmerId" })
   farmer!: FarmerProfile;
 

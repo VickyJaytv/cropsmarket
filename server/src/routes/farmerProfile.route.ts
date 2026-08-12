@@ -7,13 +7,14 @@ import {
 import { checkAuth } from "../middleware/auth.middleware.js";
 import express, { Router } from "express";
 import { Role } from "../enums/enums.js";
+import { uploadProfilePicture } from "../middleware/upload.middleware.js";
 export const farmerProfileRoutes: Router = express.Router();
 farmerProfileRoutes.post(
   "/profile",
   checkAuth,
   authorize(Role.FARMER),
+  uploadProfilePicture,
   createFarmerProfileController,
-  getPersonalFarmerProfileController,
 );
 
 farmerProfileRoutes.get(
@@ -27,5 +28,6 @@ farmerProfileRoutes.patch(
   "/profile",
   checkAuth,
   authorize(Role.FARMER),
+  uploadProfilePicture,
   updateFarmerProfileController,
 );

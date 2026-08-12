@@ -165,7 +165,19 @@ export const updateProductService = async (
 };
 
 export const deleteProductService = async (productId: number) => {
-  const product = await ProductRepository.findOneByOrFail({ id: productId });
+  const product = await ProductRepository.findOne({
+    where: { id: productId },
+    relations: { listings: true },
+  });
+  if (!product) {
+    throw new AppError("Product not found.", 404);
+  }
+  if (product.listings && product.listings.length > 0) {
+    throw new AppError(
+      "Product cannot be deleted while listings exist. Disable it instead.",
+      400,
+    );
+  }
   return await ProductRepository.remove(product);
 };
 

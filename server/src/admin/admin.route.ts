@@ -6,7 +6,7 @@ import {
 } from "./admin.controller.js";
 import { getAllListingsController } from "../controllers/listing.controller.js";
 import { deleteListingController } from "../controllers/listing.controller.js";
-export const adminRoutes: Router = express();
+export const adminRoutes: Router = express.Router();
 
 adminRoutes.get("/users", checkAuth, adminOnly, getUsersController);
 adminRoutes.get("/user/:id", checkAuth, adminOnly, getUserByIdController);

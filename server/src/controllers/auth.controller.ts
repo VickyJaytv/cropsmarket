@@ -64,8 +64,8 @@ export const loginController = async (
 ) => {
   try {
     const validateData = loginSchema.parse(req.body);
-    const user: PublicUserInterface = await LoginService(validateData);
-    generateTokenAndCookies(res, user.id.toString());
+    const user: PublicUserInterface & { tokenVersion?: number } = await LoginService(validateData);
+    generateTokenAndCookies(res, user.id.toString(), user.tokenVersion ?? 1);
     res.status(200).json({
       success: true,
       message: "user logged in successfully",
@@ -77,21 +77,23 @@ export const loginController = async (
   }
 };
 
-// export const logoutController = async (
-//   req: AuthenticatedRequest,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const userId = req.user.id;
-//     await logoutService(userId);
-//     res.clearCookie("token", {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production",
-//       sameSite: "strict",
-//     });
-//     res.status(200).json({ success: true, message: "logged out successfully" });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const logoutController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = Number(req.user?.id);
+    if (userId) {
+      await logoutService(userId);
+    }
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.status(200).json({ success: true, message: "logged out successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

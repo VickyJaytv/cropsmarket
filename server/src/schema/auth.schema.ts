@@ -11,8 +11,8 @@ export const signUpSchema = z.object({
     .trim()
     .length(11, "Phone number must be 11 digits")
     .startsWith("0", "Phone number must start with 0")
-    .regex(/^\d{10,15}$/, "Invalid phone number"),
-  role: z.enum([Role.ADMIN, Role.BUYER, Role.FARMER], {
+    .regex(/^\d{11}$/, "Invalid phone number"),
+  role: z.enum([Role.BUYER, Role.FARMER], {
     error: () => ({ message: "invalid role selection" }),
   }),
   accountType: z.enum([AccountType.INDIVIDUAL, AccountType.BUSINESS]),

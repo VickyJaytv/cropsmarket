@@ -21,8 +21,13 @@ export const checkAuth = async (
     if (!token) {
       throw new AppError("unauthorized", 401);
     }
-    const verify = jwt.verify(token, process.env.JWT_SECRET || "") as {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET is not defined in environment variables.");
+    }
+    const verify = jwt.verify(token, jwtSecret) as {
       userId: string;
+      tokenVersion?: number;
     };
     if (!verify) {
       throw new AppError("unauthorized invalid or expired token", 401);
@@ -30,6 +35,13 @@ export const checkAuth = async (
     const user = await UserRepository.findOneBy({ id: Number(verify.userId) });
     if (!user) {
       throw new AppError("user not found", 401);
+    }
+    if (
+      verify.tokenVersion !== undefined &&
+      user.tokenVersion !== undefined &&
+      verify.tokenVersion !== user.tokenVersion
+    ) {
+      throw new AppError("unauthorized invalid or expired token", 401);
     }
     req.user = user as unknown as UserInterface;
 

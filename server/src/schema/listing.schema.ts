@@ -3,7 +3,6 @@ export const listingSchema = z.object({
   quantity: z.number().positive(),
   unit: z.number().positive(),
   price: z.number().positive(),
-  desc: z.string().trim().min(1).max(500).optional(),
   description: z.string().trim().min(1).max(500).optional(),
   location: z.string().trim().min(1),
   status: z.enum(["active", "sold", "paused"]).optional(),

@@ -17,12 +17,22 @@ import { categoryRoutes } from "./routes/category.route.js";
 import { productRoutes } from "./routes/product.route.js";
 import { listingRoutes } from "./routes/listing.route.js";
 
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
+
+if (!process.env.JWT_SECRET) {
+  logger.error("FATAL: JWT_SECRET environment variable is not defined.");
+  process.exit(1);
+}
+
 const app = express();
 app.use(express.json());
 app.use(compression());
 app.use(CookieParser());
 app.use(pinoHttp());
 app.use(apiLimiter);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "Backend Running" });

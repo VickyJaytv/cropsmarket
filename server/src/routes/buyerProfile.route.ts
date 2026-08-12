@@ -13,15 +13,14 @@ buyerProfileRoutes.post(
   "/profile",
   checkAuth,
   authorize(Role.BUYER),
+  uploadProfilePicture,
   createBuyerProfileController,
-  getPersonalBuyerProfileController,
 );
 
 buyerProfileRoutes.get(
   "/profile",
   checkAuth,
   authorize(Role.BUYER),
-  uploadProfilePicture,
   getPersonalBuyerProfileController,
 );
 
@@ -29,5 +28,6 @@ buyerProfileRoutes.patch(
   "/profile",
   checkAuth,
   authorize(Role.BUYER),
+  uploadProfilePicture,
   updateBuyerProfileController,
 );

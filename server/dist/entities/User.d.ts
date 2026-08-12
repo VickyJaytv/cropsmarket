@@ -10,7 +10,7 @@ export declare class User {
     phoneNumber: string;
     password: string;
     role: Role;
-    AccountType: AccountType;
+    accountType: AccountType;
     passwordResetToken: string | null;
     passwordResetTokenExpiresAt: Date | null;
     buyerProfile: BuyerProfile;

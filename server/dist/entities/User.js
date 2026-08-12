@@ -48,7 +48,7 @@ __decorate([
         enum: AccountType,
     }),
     __metadata("design:type", String)
-], User.prototype, "AccountType", void 0);
+], User.prototype, "accountType", void 0);
 __decorate([
     Column({ type: "varchar", nullable: true }),
     __metadata("design:type", Object)

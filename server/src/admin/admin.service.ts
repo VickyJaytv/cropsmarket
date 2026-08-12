@@ -1,5 +1,15 @@
-import { number } from "zod";
-import { UserRepository } from "./../repositories/user.repository.js";
+import { UserRepository } from "../repositories/user.repository.js";
+
+const sanitizeUser = (user: any) => {
+  const {
+    password: _p,
+    passwordResetToken: _prt,
+    passwordResetTokenExpiresAt: _prte,
+    ...sanitized
+  } = user;
+  return sanitized;
+};
+
 export const getUsersService = async (page: number, limit: number) => {
   const [users, total] = await UserRepository.findAndCount({
     skip: (page - 1) * limit,
@@ -10,7 +20,7 @@ export const getUsersService = async (page: number, limit: number) => {
   });
 
   return {
-    users,
+    users: users.map(sanitizeUser),
     pagination: {
       total,
       page,
@@ -29,5 +39,5 @@ export const getUserByIdService = async (userId: number) => {
     },
   });
 
-  return user;
+  return sanitizeUser(user);
 };
