@@ -1,4 +1,4 @@
-import { AccountType, Role } from "@/enums/enums.js";
+import { AccountType, Role } from "../enums/enums.js";
 import { z } from "zod";
 const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
 

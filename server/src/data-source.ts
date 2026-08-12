@@ -5,6 +5,7 @@ import { dirname, join } from "path";
 import { User } from "./entities/User.js";
 import { Category } from "./entities/Category.js";
 import { Product } from "./entities/Product.js";
+import { Listing } from "./entities/Listing.js";
 import { BuyerProfile } from "./entities/BuyerProfile.js";
 import { FarmerProfile } from "./entities/FarmerProfile.js";
 
@@ -27,6 +28,6 @@ export const AppDataSource = new DataSource({
   logging: false,
   // entities: [__dirname + "/../entities/*.{ts,js}"],
   // migrations: [__dirname + "/../migrations/*.{ts,js}"],
-  entities: [User, Category, Product, BuyerProfile, FarmerProfile],
+  entities: [User, Category, Product, Listing, BuyerProfile, FarmerProfile],
   migrations: [],
 });

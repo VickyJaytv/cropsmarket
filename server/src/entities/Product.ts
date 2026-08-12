@@ -23,10 +23,10 @@ export class Product {
   slug!: string;
 
   @Column({ type: "text", nullable: true })
-  description!: string | null;
+  description?: string | null;
 
   @Column({ type: "varchar", nullable: true })
-  image!: string | null;
+  image?: string | null;
 
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
@@ -35,8 +35,8 @@ export class Product {
     nullable: false,
     onDelete: "RESTRICT",
   })
-  // @OneToMany(() => Listing, (listing) => listing.product)
-  // listings!: Listing;
+  @OneToMany(() => Listing, (listing) => listing.product)
+  listings!: Listing;
   @JoinColumn({ name: "categoryId" })
   category!: Category;
 

@@ -35,15 +35,12 @@ export const getAllCategoriesController = async (
   next: NextFunction,
 ) => {
   try {
-    const q = req.query;
-    if (typeof q !== "string") {
-      return res.status(400).json({
-        message: "Search query is required",
-      });
-    }
-    const category = q
-      ? await searchCategoryService(q as string)
-      : await getAllCategoriesService();
+    const { q } = req.query;
+
+    const category =
+      typeof q === "string"
+        ? await searchCategoryService(q)
+        : await getAllCategoriesService();
     return res.status(200).json({
       success: true,
       message: "category fetched successfully",
@@ -98,7 +95,7 @@ export const deleteCategoryController = async (
   try {
     const categoryId = Number(req.params.id);
     const category = await deleteCategoryService(categoryId);
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
       message: "category deleted successfully",
       data: category,

@@ -16,7 +16,7 @@
     "resolveJsonModule": true,
 
     "paths": {
-      "@/*": ["./src/*"]
+      "../*": ["./src/*"]
     },
 
     "sourceMap": true,
@@ -28,7 +28,7 @@
 
     "skipLibCheck": true,
 
-    "noUncheckedIndexedAccess": true,
+    "noUncheckedIndexedAccess": true
     // "exactOptionalPropertyTypes": true
   },
 

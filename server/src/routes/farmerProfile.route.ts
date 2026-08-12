@@ -1,4 +1,4 @@
-import { authorize } from "@/middleware/role.middleware.js";
+import { authorize } from "../middleware/role.middleware.js";
 import {
   createFarmerProfileController,
   getPersonalFarmerProfileController,

@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { User } from "./User.js";
+import { Listing } from "./Listing.js";
 
 @Entity()
 export class FarmerProfile {
@@ -18,6 +20,10 @@ export class FarmerProfile {
   @OneToOne(() => User, (user) => user.farmerProfile)
   @JoinColumn({ name: "userId" })
   user!: User;
+
+  @OneToMany(() => Listing, (listing) => listing.farmer)
+  @JoinColumn({ name: "listingId" })
+  listing!: Listing;
 
   @Column({ type: "varchar", nullable: true })
   profilePicture!: string | null;

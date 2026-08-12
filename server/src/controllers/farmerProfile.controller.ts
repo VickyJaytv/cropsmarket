@@ -8,7 +8,7 @@ import {
 import {
   createFarmerProfileService,
   getFarmerProfileService,
-} from "@/services/farmerProfile.service.js";
+} from "../services/farmerProfile.service.js";
 import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 import { updateFarmerProfileService } from "./../services/farmerProfile.service.js";
 

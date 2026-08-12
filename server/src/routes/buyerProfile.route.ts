@@ -6,8 +6,8 @@ import {
 } from "../controllers/buyerProfile.controller.js";
 import { checkAuth } from "../middleware/auth.middleware.js";
 import express, { Router } from "express";
-import { authorize } from "@/middleware/role.middleware.js";
-import { Role } from "@/enums/enums.js";
+import { authorize } from "../middleware/role.middleware.js";
+import { Role } from "../enums/enums.js";
 export const buyerProfileRoutes: Router = express.Router();
 buyerProfileRoutes.post(
   "/profile",

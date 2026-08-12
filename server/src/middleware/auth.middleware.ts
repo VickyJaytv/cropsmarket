@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 import { UserRepository } from "../repositories/user.repository.js";
 import { UserInterface } from "./../interfaces/user.interface.js";
-import { AppError } from "@/utils/AppError.js";
+import { AppError } from "../utils/AppError.js";
 import { Role } from "../enums/enums.js";
 export interface AuthenticatedRequest extends Request {
   user?: UserInterface;

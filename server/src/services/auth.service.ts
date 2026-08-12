@@ -3,7 +3,7 @@ import { UserRepository } from "../repositories/user.repository.js";
 import { LoginDTO, SignupDTO } from "../schema/auth.schema.js";
 import { AppError } from "../utils/AppError.js";
 import { QueryFailedError } from "typeorm";
-import { PublicUserInterface } from "@/interfaces/user.interface.js";
+import { PublicUserInterface } from "../interfaces/user.interface.js";
 export const SignUpService = async (data: SignupDTO) => {
   try {
     const hashedPassword = await bcrypt.hash(data.password, 12);

@@ -14,6 +14,8 @@ import { apiLimiter } from "./config/rate-limit.js";
 import { farmerProfileRoutes } from "./routes/farmerProfile.route.js";
 import { adminRoutes } from "./admin/admin.route.js";
 import { categoryRoutes } from "./routes/category.route.js";
+import { productRoutes } from "./routes/product.route.js";
+import { listingRoutes } from "./routes/listing.route.js";
 
 const app = express();
 app.use(express.json());
@@ -22,8 +24,8 @@ app.use(CookieParser());
 app.use(pinoHttp());
 app.use(apiLimiter);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("<h1>Backend Running on port 8090</h1>");
+app.get("/health", (_req: Request, res: Response) => {
+  res.json({ status: "Backend Running" });
 });
 
 AppDataSource.initialize()
@@ -33,12 +35,17 @@ AppDataSource.initialize()
     app.use("/api/v1/farmer", farmerProfileRoutes);
     app.use("/api/v1/admin", adminRoutes);
     app.use("/api/v1/categories", categoryRoutes);
+    app.use("/api/v1/products", productRoutes);
+    app.use("/api/v1/listings", listingRoutes);
 
     // error middleware LAST
     app.use(errorMiddleware);
 
     // listen to server port
-    app.listen(8090, () => console.log(`listening at http://localhost:8090`));
+    const PORT = process.env.PORT || 8090;
+    app.listen(PORT, () =>
+      console.log(`listening at http://localhost:${PORT}`),
+    );
   })
   .catch((err: unknown) => {
     logger.error(`DB init failed: ${err}`);

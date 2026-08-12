@@ -9,7 +9,7 @@ import {
 import { logger } from "./../config/logger.js";
 import { AuthenticatedRequest } from "./../middleware/auth.middleware.js";
 import { generateTokenAndCookies } from "../utils/cookies.js";
-import { PublicUserInterface } from "@/interfaces/user.interface.js";
+import { PublicUserInterface } from "../interfaces/user.interface.js";
 
 export const signupController = async (
   req: Request,
