@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #1B5E20;
+  --secondary: #2E7D32;
+  --tertiary: #883454;
+  --neutral: #747871;
+  --white: #fff;
+  --background: #f7fbf1;
+  --foreground: #191d17;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: #1B5E20;
+  --color-primary-light: #2E7D32;
+  --color-secondary: #2E7D32;
+  --color-tertiary: #883454;
+  --color-neutral: #747871;
+
+  --color-surface: #f7fbf1;
+  --color-surface-dim: #d8dbd2;
+  --color-surface-bright: #f7fbf1;
+  --color-surface-container: #ecefe6;
+  --color-surface-container-low: #f2f5ec;
+  --color-surface-container-high: #e6e9e0;
+  --color-surface-container-highest: #e0e4db;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #e0e4db;
+
+  --color-on-surface: #191d17;
+  --color-on-surface-variant: #41493e;
+  --color-on-background: #191d17;
+
+  --color-primary-container: #1B5E20;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #90d689;
+
+  --color-secondary-container: #a0f399;
+  --color-on-secondary-container: #217128;
+
+  --color-tertiary-container: #883454;
+  --color-on-tertiary: #ffffff;
+
+  --color-outline: #717a6d;
+  --color-outline-variant: #c0c9bb;
+
+  --color-inverse-surface: #2d322c;
+  --color-inverse-on-surface: #eff2e9;
+
+  --font-body: "Inter", var(--font-inter), sans-serif;
+  --font-heading: "Poppins", var(--font-poppins), sans-serif;
+  --font-display: "Inter", var(--font-inter), sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+.soft-shadow {
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    to right,
+    rgba(236, 239, 230, 0.92) 0%,
+    rgba(236, 239, 230, 0.7) 40%,
+    rgba(236, 239, 230, 0.1) 100%
+  );
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

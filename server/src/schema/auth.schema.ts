@@ -5,7 +5,7 @@ const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
 export const signUpSchema = z.object({
   firstName: z.string().trim().min(3, "Name required"),
   lastName: z.string().trim().min(3, "Name required"),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email().url("Invalid email address"),
   phoneNumber: z
     .string()
     .trim()
