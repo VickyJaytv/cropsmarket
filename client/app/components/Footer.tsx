@@ -12,7 +12,7 @@ const mobileLinks = ["Privacy Policy", "Terms of Service", "Help Center"];
 
 export default function Footer() {
   return (
-    <footer className="bg-surface-container-highest border-t border-outline-variant w-full mt-auto">
+    <footer id="contact" className="bg-surface-container-highest border-t border-outline-variant w-full mt-auto scroll-mt-24">
       {/* Desktop Footer */}
       <div className="hidden md:flex flex-row justify-between items-center px-20 py-6 w-full max-w-7xl mx-auto gap-6">
         <div className="flex flex-col gap-2">

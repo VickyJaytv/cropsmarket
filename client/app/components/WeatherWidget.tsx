@@ -10,7 +10,7 @@ const forecast = [
 
 export default function WeatherWidget() {
   return (
-    <section className="px-4 md:px-20 -mt-10 relative z-30 mb-6 md:hidden">
+    <section id="weather-widget" className="px-4 md:px-20 -mt-10 relative z-30 mb-6 md:hidden scroll-mt-24">
       <div className="bg-surface-container-lowest rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.06)] p-4 border border-outline-variant/30">
         {/* Header */}
         <div className="flex flex-col mb-4">

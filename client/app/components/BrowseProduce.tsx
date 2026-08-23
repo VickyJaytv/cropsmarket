@@ -43,7 +43,7 @@ const products = [
 
 export default function BrowseProduce() {
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 md:px-20 mb-20">
+    <section id="browse-produce" className="w-full max-w-7xl mx-auto px-4 md:px-20 mb-20 scroll-mt-24">
       {/* Section Header */}
       <div className="flex justify-between items-end mb-6 border-b border-outline-variant pb-3">
         <h2 className="font-heading text-xl font-semibold text-on-surface">

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Leaf, Mail, Lock, Eye, EyeOff, Shield } from "lucide-react";
+import { Leaf, Mail, Lock, Eye, EyeOff, Shield, ArrowLeft } from "lucide-react";
 import { login } from "@/app/services/auth.service";
 import { loginSchema, type LoginInput } from "@/app/schema/auth.schema";
 import { useAuthStore } from "@/app/store/authStore";
@@ -68,9 +69,7 @@ export default function LoginPage() {
       const error = err as { message?: string | string[] };
       if (Array.isArray(error.message)) {
         showToast("Please check your input and try again", "error");
-      } else if (
-        error.message?.includes("invalid email or password")
-      ) {
+      } else if (error.message?.includes("invalid email or password")) {
         showToast("Invalid email or password", "error");
       } else {
         showToast("Something went wrong. Please try again later", "error");
@@ -86,18 +85,24 @@ export default function LoginPage() {
 
       {/* Left Side - Hero (Desktop only) */}
       <div className="hidden md:flex md:w-1/2 relative bg-surface-container-high overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent z-10" />
-        <img
+        <div className="absolute inset-0 bg-linear-to-t from-primary/80 to-transparent z-10" />
+        <Image
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfdN_EnnibV6GTk1W2JKBsoNxs60JgTwQtBdx9HiqunwnvoWn8tqpnQSd_NUFsrnLkzv5iOrGQMKhUpN84nTMRIIF9OG-kwHDcrNebYOrnaVMuaV4YeGGZkszBctn70Kp21lqXEH5cu4gGvvHRpMOIaS07riI5X5IjaUK4Cvx9ol7nn986ikmlel3vEkLRmnwRwszyZlb8-jwJQ27iiOXW1jypTs5zZ80YKlMhBqUmdQ4l6r9goZ5x"
           alt="Agricultural field at golden hour"
+          fill
           className="object-cover w-full h-full absolute inset-0 z-0"
         />
+        {/* Hero Image Icon */}
         <div className="relative z-20 flex flex-col justify-end p-20 h-full w-full text-white">
-          <div className="flex items-center gap-2 mb-6">
-            <Leaf className="w-10 h-10" fill="currentColor" />
-            <span className="font-heading text-xl font-semibold">Cropsmarket</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-6">
+              <Leaf className="w-10 h-10" fill="currentColor" />
+              <span className="font-heading text-xl font-semibold">
+                Cropsmarket
+              </span>
+            </div>
           </div>
-          <h1 className="font-display text-[40px] leading-[48px] tracking-[-0.02em] font-bold mb-4">
+          <h1 className="font-display text-[40px] leading-12 tracking-[-0.02em] font-bold mb-4">
             Grow your business with smart connections.
           </h1>
           <p className="text-base leading-6 max-w-md opacity-90">
@@ -108,31 +113,32 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full md:w-1/2 h-full overflow-y-auto bg-surface flex flex-col items-center justify-center p-6 md:p-12 relative">
-        {/* Mobile Logo */}
-        <div className="md:hidden flex items-center gap-2 mb-6 self-start">
-          <Leaf className="w-8 h-8 text-primary" fill="currentColor" />
-          <span className="font-heading text-xl font-bold text-primary">
-            Cropsmarket
-          </span>
+      <div className="w-full md:w-1/2 h-full overflow-y-auto bg-surface flex flex-col items-center justify-center p-6 md:p-12">
+        {/* Top Navigation aligned with card */}
+        <div className="w-full max-w-md mb-3 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-on-surface-variant/75 hover:text-primary transition-colors py-1.5 px-2 -ml-2 rounded-lg hover:bg-surface-container-low group"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-150 group-hover:-translate-x-0.5" />
+            <span>Back to home</span>
+          </Link>
+
+          {/* Logo */}
+          <div className="flex items-center gap-1.5 text-primary">
+            <Leaf className="w-5 h-5" fill="currentColor" />
+            <span className="font-heading text-sm font-bold">Cropsmarket</span>
+          </div>
         </div>
 
         <div className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/30 overflow-hidden relative">
           {/* Green top bar */}
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary" />
+          <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-primary to-secondary" />
 
           <div className="p-8 md:p-10 flex flex-col items-center">
-            {/* Logo */}
-            <div className="flex items-center gap-2 mb-8 mt-2">
-              <Leaf className="w-10 h-10 text-primary" fill="currentColor" />
-              <span className="font-heading text-xl font-bold text-primary">
-                Cropsmarket
-              </span>
-            </div>
-
             {/* Header */}
             <div className="w-full text-center mb-8">
-              <h1 className="font-heading text-[24px] leading-[32px] font-bold text-on-surface mb-2">
+              <h1 className="font-heading text-[24px] leading-8 font-bold text-on-surface mb-2">
                 Welcome Back
               </h1>
               <p className="text-sm text-on-surface-variant">
@@ -245,7 +251,7 @@ export default function LoginPage() {
                   href="/signup"
                   className="font-semibold text-primary hover:underline"
                 >
-                  Sign up as a Farmer
+                  Create Account
                 </Link>
               </p>
             </div>

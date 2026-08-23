@@ -17,7 +17,7 @@ const benefits = [
 
 export default function WhyCropsmarket() {
   return (
-    <section className="px-4 md:px-20 mb-6 md:hidden pb-6 border-b border-outline-variant/30">
+    <section id="about-us" className="px-4 md:px-20 mb-6 md:hidden pb-6 border-b border-outline-variant/30 scroll-mt-24">
       <h3 className="font-heading text-lg font-semibold text-on-surface mb-4 text-center">
         Why Cropsmarket?
       </h3>
