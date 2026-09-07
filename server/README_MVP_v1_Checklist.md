@@ -10,8 +10,8 @@ Validate that farmers can list produce and buyers can discover and contact them.
 - [ ] SMS OTP verification
 - [x] Login
 - [x] JWT authentication
-- [ ] Forgot Password
-- [ ] Reset Password
+- [x] Forgot Password
+- [x] Reset Password
 - [x] Role selection (Farmer / Buyer)
 - [x] Logout
 

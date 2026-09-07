@@ -1,9 +1,16 @@
 import { AppError } from "../utils/AppError.js";
-import { loginSchema, signUpSchema } from "../schema/auth.schema.js";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  resetPasswordSchema,
+  signUpSchema,
+} from "../schema/auth.schema.js";
 import type { Request, Response, NextFunction } from "express";
 import {
+  forgotPasswordService,
   LoginService,
   logoutService,
+  resetPasswordService,
   SignUpService,
 } from "../services/auth.service.js";
 import { logger } from "./../config/logger.js";
@@ -97,3 +104,38 @@ export const logoutController = async (
     next(error);
   }
 };
+
+export const forgotPasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validateData = forgotPasswordSchema.parse(req.body);
+    const result = await forgotPasswordService(validateData);
+    res.status(200).json({
+      success: true,
+      ...result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validateData = resetPasswordSchema.parse(req.body);
+    const result = await resetPasswordService(validateData);
+    res.status(200).json({
+      success: true,
+      ...result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

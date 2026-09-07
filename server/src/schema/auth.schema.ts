@@ -5,7 +5,7 @@ const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
 export const signUpSchema = z.object({
   firstName: z.string().trim().min(3, "Name required"),
   lastName: z.string().trim().min(3, "Name required"),
-  email: z.string().email().url("Invalid email address"),
+  email: z.string().trim().email("Invalid email address"),
   phoneNumber: z
     .string()
     .trim()
@@ -35,9 +35,38 @@ export const signUpSchema = z.object({
 
 export type SignupDTO = z.infer<typeof signUpSchema>;
 
-export const loginSchema = signUpSchema.pick({
-  email: true,
-  password: true,
+export const loginSchema = z.object({
+  email: z.string().trim().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export type LoginDTO = z.infer<typeof loginSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email("Invalid email address"),
+});
+
+export type ForgotPasswordDTO = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z.object({
+  token: z.string().trim().min(1, "Reset token is required"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .refine((value) => /[a-z]/.test(value), {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .refine((value) => /[A-Z]/.test(value), {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .refine((value) => /[0-9]/.test(value), {
+      message: "Password must contain at least one number",
+    })
+    .refine((value) => specialCharRegex.test(value), {
+      message: "Password must contain at least one special character",
+    }),
+});
+
+export type ResetPasswordDTO = z.infer<typeof resetPasswordSchema>;
+
+
