@@ -1,271 +1,325 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Leaf, Mail, Lock, Eye, EyeOff, Shield, ArrowLeft } from "lucide-react";
-import { login } from "@/app/services/auth.service";
-import { loginSchema, type LoginInput } from "@/app/schema/auth.schema";
-import { useAuthStore } from "@/app/store/authStore";
-import ToastContainer, { showToast } from "@/app/components/ui/Toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Navbar } from "../../components/Navbar";
+import { Footer } from "../../components/Footer";
+import { useAuth } from "../../context/AuthContext";
+import { authService } from "../../services/auth.service";
+import { loginSchema, LoginFormData } from "../../schema/authSchema";
+import {
+  ArrowLeft,
+  ShieldCheck,
+  CheckCircle2,
+  AlertCircle,
+  Lock,
+  Mail,
+  Sprout,
+  Star,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Shield,
+  Gavel,
+  Headphones,
+} from "lucide-react";
 
-export default function LoginPage() {
+function AuthFormContent() {
   const router = useRouter();
-  const { setUser } = useAuthStore();
-  const [loading, setLoading] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
+  // Login Form Hook
+  const {
+    register: registerLogin,
+    handleSubmit: handleLoginSubmit,
+    formState: { errors: loginErrors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[name];
-        return next;
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-
-    const payload: LoginInput = {
-      email: formData.email,
-      password: formData.password,
-    };
-
-    const result = loginSchema.safeParse(payload);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as string;
-        fieldErrors[field] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-
+  // Handle Login Submission
+  const onLoginSubmit = async (data: LoginFormData) => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
     setLoading(true);
+
     try {
-      const response = await login(result.data);
-      if (response.data) {
-        setUser(response.data);
-      }
-      showToast("Welcome back!", "success");
-      setTimeout(() => router.push("/"), 1000);
-    } catch (err: unknown) {
-      const error = err as { message?: string | string[] };
-      if (Array.isArray(error.message)) {
-        showToast("Please check your input and try again", "error");
-      } else if (error.message?.includes("invalid email or password")) {
-        showToast("Invalid email or password", "error");
+      const res = await authService.login(data);
+      if (res.success && res.data) {
+        setSuccessMessage("Login successful! Redirecting...");
+        login(res.data.token || "jwt_token_sample", {
+          id: res.data.id,
+          firstName: res.data.firstName || "User",
+          lastName: res.data.lastName || "",
+          email: res.data.email,
+          role: res.data.role,
+        });
+        setTimeout(() => {
+          router.push(
+            res.data.role?.toLowerCase() === "farmer"
+              ? "/dashboard"
+              : "/browse-produce"
+          );
+        }, 800);
       } else {
-        showToast("Something went wrong. Please try again later", "error");
+        setErrorMessage(res.message || "Failed to log in. Please check credentials.");
       }
+    } catch (err: any) {
+      setErrorMessage(
+        err.response?.data?.message || "Invalid credentials or network error."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-background min-h-screen flex flex-col md:flex-row overflow-hidden">
-      <ToastContainer />
-
-      {/* Left Side - Hero (Desktop only) */}
-      <div className="hidden md:flex md:w-1/2 relative bg-surface-container-high overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-t from-primary/80 to-transparent z-10" />
-        <Image
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfdN_EnnibV6GTk1W2JKBsoNxs60JgTwQtBdx9HiqunwnvoWn8tqpnQSd_NUFsrnLkzv5iOrGQMKhUpN84nTMRIIF9OG-kwHDcrNebYOrnaVMuaV4YeGGZkszBctn70Kp21lqXEH5cu4gGvvHRpMOIaS07riI5X5IjaUK4Cvx9ol7nn986ikmlel3vEkLRmnwRwszyZlb8-jwJQ27iiOXW1jypTs5zZ80YKlMhBqUmdQ4l6r9goZ5x"
-          alt="Agricultural field at golden hour"
-          fill
-          className="object-cover w-full h-full absolute inset-0 z-0"
-        />
-        {/* Hero Image Icon */}
-        <div className="relative z-20 flex flex-col justify-end p-20 h-full w-full text-white">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 mb-6">
-              <Leaf className="w-10 h-10" fill="currentColor" />
-              <span className="font-heading text-xl font-semibold">
-                Cropsmarket
-              </span>
-            </div>
-          </div>
-          <h1 className="font-display text-[40px] leading-12 tracking-[-0.02em] font-bold mb-4">
-            Grow your business with smart connections.
-          </h1>
-          <p className="text-base leading-6 max-w-md opacity-90">
-            Join thousands of verified farmers and buyers in a climate-smart
-            marketplace designed for transparency and growth.
-          </p>
+    <div className="w-full max-w-[1240px] mx-auto px-4 py-8 flex flex-col gap-6">
+      {/* Contextual Sub-Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-border-gray/40">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-deep-forest hover:text-primary transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+            <span>Back To Home</span>
+          </Link>
+          <span className="text-natural-gray">•</span>
+          <span className="text-xs font-medium text-natural-gray">
+            Farm-Gate Escrow Authenticated
+          </span>
         </div>
       </div>
 
-      {/* Right Side - Form */}
-      <div className="w-full md:w-1/2 h-full overflow-y-auto bg-surface flex flex-col items-center justify-center p-6 md:p-12">
-        {/* Top Navigation aligned with card */}
-        <div className="w-full max-w-md mb-3 flex items-center justify-between">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-on-surface-variant/75 hover:text-primary transition-colors py-1.5 px-2 -ml-2 rounded-lg hover:bg-surface-container-low group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-150 group-hover:-translate-x-0.5" />
-            <span>Back to home</span>
-          </Link>
+      {/* Main Login Container */}
+      <div className="w-full bg-pure-white rounded-2xl border border-border-gray/70 shadow-lg overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        {/* LEFT COLUMN: Dedicated Agricultural Editorial & Trust Panel */}
+        <div className="lg:col-span-5 relative bg-deep-forest text-pure-white p-8 sm:p-12 flex flex-col justify-between overflow-hidden min-h-[520px] lg:min-h-[660px]">
+          {/* Ambient Background Scrim */}
+          <div
+            className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30 pointer-events-none"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&q=80&w=1000')",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-deep-forest/95 via-primary/90 to-[#143220]/95" />
 
-          {/* Logo */}
-          <div className="flex items-center gap-1.5 text-primary">
-            <Leaf className="w-5 h-5" fill="currentColor" />
-            <span className="font-heading text-sm font-bold">Cropsmarket</span>
+          {/* Top Content */}
+          <div className="relative z-10 flex flex-col gap-4">
+            <div className="inline-flex items-center gap-2 self-start px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs font-bold uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-fresh-leaf" />
+              <span>Verified Farm-Gate Trade</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-pure-white tracking-tight leading-snug">
+              Bridging Nigerian Farmlands to Commercial Markets.
+            </h2>
+            <p className="text-sm text-soft-sage/90 max-w-md leading-relaxed">
+              Connecting 4,500+ verified cooperative growers directly with FMCG processors and bulk wholesale off-takers across 36 states.
+            </p>
+          </div>
+
+          {/* Middle Content */}
+          <div className="relative z-10 my-6 space-y-3">
+            <div className="flex items-start gap-3 bg-white/5 backdrop-blur-xs p-3 rounded-xl border border-white/10">
+              <div className="w-8 h-8 rounded-full bg-fresh-leaf/30 flex items-center justify-center shrink-0 mt-0.5 text-emerald-300">
+                <Sprout className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-pure-white">Direct Farm-Gate Pricing</p>
+                <p className="text-xs text-soft-sage/80">Eliminate unverified broker margins with auditable crop origins.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 bg-white/5 backdrop-blur-xs p-3 rounded-xl border border-white/10">
+              <div className="w-8 h-8 rounded-full bg-fresh-leaf/30 flex items-center justify-center shrink-0 mt-0.5 text-emerald-300">
+                <Lock className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-pure-white">Moniepoint Escrow Vault</p>
+                <p className="text-xs text-soft-sage/80">Settlement releases only after quality confirmation at destination.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 bg-white/5 backdrop-blur-xs p-3 rounded-xl border border-white/10">
+              <div className="w-8 h-8 rounded-full bg-fresh-leaf/30 flex items-center justify-center shrink-0 mt-0.5 text-emerald-300">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-pure-white">Agronomist Certified Grading</p>
+                <p className="text-xs text-soft-sage/80">Moisture, aflatoxin, and purity certificates logged per consignment.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom: Verified Trade Quote Card */}
+          <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 flex flex-col gap-2">
+            <div className="flex items-center gap-1 text-harvest-gold">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className="w-3.5 h-3.5 fill-harvest-gold" />
+              ))}
+              <span className="text-xs text-pure-white ml-2 font-bold">180 MT Fulfilled</span>
+            </div>
+            <p className="text-xs text-soft-sage italic leading-relaxed">
+              “We secured 180 metric tons of export-grade soybeans and yellow maize without payment disputes. Escrow protection gives our executive board complete peace of mind.”
+            </p>
+            <div className="flex items-center justify-between pt-1 border-t border-white/10 text-xs">
+              <span className="font-bold text-pure-white">AgroAllied Mills Ltd, Ibadan</span>
+              <span className="font-semibold text-emerald-300">Verified Buyer</span>
+            </div>
           </div>
         </div>
 
-        <div className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/30 overflow-hidden relative">
-          {/* Green top bar */}
-          <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-primary to-secondary" />
-
-          <div className="p-8 md:p-10 flex flex-col items-center">
+        {/* RIGHT COLUMN: Login Form */}
+        <div className="lg:col-span-7 p-6 sm:p-10 lg:p-12 bg-pure-white flex flex-col justify-between">
+          <div className="max-w-xl mx-auto w-full space-y-6">
             {/* Header */}
-            <div className="w-full text-center mb-8">
-              <h1 className="font-heading text-[24px] leading-8 font-bold text-on-surface mb-2">
-                Welcome Back
+            <div>
+              <div className="flex items-center gap-1.5 text-fresh-leaf font-bold text-xs uppercase mb-1">
+                <Lock className="w-4 h-4" />
+                <span>Secure Access Portal</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal-text tracking-tight">
+                Welcome Back to CropsMarket
               </h1>
-              <p className="text-sm text-on-surface-variant">
-                Sign in to manage your listings and connect with buyers.
+              <p className="text-xs sm:text-sm text-natural-gray mt-1">
+                Log in to monitor live commodity bids, manage storage manifests, and track your escrow transactions.
               </p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="w-full space-y-4">
-              {/* Email */}
+            {/* Alerts */}
+            {errorMessage && (
+              <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-error-red text-xs font-bold flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+            {successMessage && (
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-success-green text-xs font-bold flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+                <span>{successMessage}</span>
+              </div>
+            )}
+
+            {/* LOGIN FORM */}
+            <form onSubmit={handleLoginSubmit(onLoginSubmit)} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium tracking-wider text-on-surface mb-1.5">
+                <label className="block text-xs font-bold text-charcoal-text uppercase mb-1">
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="w-5 h-5 text-outline" />
-                  </div>
+                  <Mail className="w-4 h-4 text-natural-gray absolute left-3.5 top-3" />
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="farmer@example.com"
-                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg bg-surface-container-lowest text-sm text-on-surface focus:ring-2 focus:ring-primary focus:border-primary placeholder-outline outline-none ${
-                      errors.email ? "border-red-500" : "border-outline-variant"
-                    }`}
+                    placeholder="adebayo@agrifarms.ng"
+                    {...registerLogin("email")}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border-gray text-xs text-charcoal-text focus:outline-hidden focus:border-deep-forest bg-warm-cream/30"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                {loginErrors.email && (
+                  <p className="text-xs text-error-red mt-1">{loginErrors.email.message}</p>
                 )}
               </div>
 
-              {/* Password */}
               <div>
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-medium tracking-wider text-on-surface">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-charcoal-text uppercase">
                     Password
                   </label>
-                  <Link
-                    href="#"
-                    className="text-xs font-medium text-primary hover:underline"
-                  >
+                  <a href="#" className="text-xs font-semibold text-deep-forest hover:underline">
                     Forgot Password?
-                  </Link>
+                  </a>
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="w-5 h-5 text-outline" />
-                  </div>
+                  <Lock className="w-4 h-4 text-natural-gray absolute left-3.5 top-3" />
                   <input
                     type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`block w-full pl-10 pr-10 py-3 border rounded-lg bg-surface-container-lowest text-sm text-on-surface focus:ring-2 focus:ring-primary focus:border-primary placeholder-outline outline-none ${
-                      errors.password
-                        ? "border-red-500"
-                        : "border-outline-variant"
-                    }`}
+                    placeholder="••••••••••••"
+                    {...registerLogin("password")}
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-border-gray text-xs text-charcoal-text focus:outline-hidden focus:border-deep-forest bg-warm-cream/30"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface-variant transition-colors"
+                    className="absolute right-3 top-2.5 text-natural-gray hover:text-charcoal-text"
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                {loginErrors.password && (
+                  <p className="text-xs text-error-red mt-1">{loginErrors.password.message}</p>
                 )}
               </div>
 
-              {/* Remember Me */}
-              <div className="flex items-center pt-1 pb-2">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-primary focus:ring-primary border-outline-variant rounded cursor-pointer"
-                />
-                <label className="ml-2 block text-sm text-on-surface-variant cursor-pointer">
-                  Remember me
+              <div className="flex items-center justify-between pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-xs text-charcoal-text">
+                  <input
+                    type="checkbox"
+                    className="rounded border-border-gray text-deep-forest accent-deep-forest"
+                  />
+                  <span>Remember device for 30 days</span>
                 </label>
+                <span className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-fresh-leaf">
+                  <ShieldCheck className="w-3.5 h-3.5" /> 256-Bit SSL
+                </span>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-semibold text-on-primary bg-primary hover:bg-secondary transition-colors duration-200 disabled:opacity-50"
+                className="w-full py-3.5 bg-deep-forest hover:bg-primary text-pure-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
               >
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "Signing In..." : "Sign In to Marketplace"} <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Sign Up Link */}
-            <div className="mt-8 text-center">
-              <p className="text-sm text-on-surface-variant">
-                Don&apos;t have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="font-semibold text-primary hover:underline"
-                >
-                  Create Account
-                </Link>
-              </p>
+            {/* Regulatory Confidence Strips */}
+            <div className="pt-4 border-t border-border-gray/60 flex flex-wrap items-center justify-between text-[11px] text-natural-gray gap-2">
+              <span className="flex items-center gap-1">
+                <Shield className="w-3.5 h-3.5 text-fresh-leaf" /> FMARD Standards Aligned
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Gavel className="w-3.5 h-3.5 text-fresh-leaf" /> NDPR Data Protection
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Headphones className="w-3.5 h-3.5 text-fresh-leaf" /> Desk: 0800-AGRI-OYO
+              </span>
             </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="bg-surface-container-low px-8 py-4 border-t border-outline-variant/30 text-center">
-            <p className="text-xs text-on-surface-variant flex items-center justify-center gap-1">
-              <Shield className="w-4 h-4" />
-              Verified Marketplace for Farmers &amp; Buyers
-            </p>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-warm-cream">
+      <Navbar />
+      <main className="pt-20 flex-1 flex items-center justify-center py-8">
+        <Suspense fallback={<div className="p-8 text-center text-natural-gray">Loading portal...</div>}>
+          <AuthFormContent />
+        </Suspense>
+      </main>
+      <Footer />
     </div>
   );
 }

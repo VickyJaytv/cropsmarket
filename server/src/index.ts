@@ -2,6 +2,7 @@ import "reflect-metadata";
 import "dotenv/config";
 import type { Request, Response } from "express";
 import express from "express";
+import cors from "cors";
 import compression from "compression";
 import CookieParser from "cookie-parser";
 import { pinoHttp } from "pino-http";
@@ -26,6 +27,28 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps or curl) or if origin is in allowedOrigins
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  })
+);
+
 app.use(express.json());
 app.use(compression());
 app.use(CookieParser());

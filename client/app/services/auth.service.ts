@@ -1,80 +1,47 @@
-import type { SignupInput, LoginInput } from "@/app/schema/auth.schema";
+import { axiosInstance } from "./axiosInstance";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string | string[];
-  data?: T;
-}
-
-interface UserData {
-  id: number;
+export interface SignupPayload {
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
-  role: "buyer" | "farmer";
-  accountType: string;
-  createdAt: string;
-  updatedAt: string;
+  password: string;
+  role: "farmer" | "buyer" | "FARMER" | "BUYER";
+  accountType: "INDIVIDUAL" | "BUSINESS";
 }
 
-export async function signup(data: SignupInput): Promise<ApiResponse<UserData>> {
-  const res = await fetch(`${API_URL}/auth/signup`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw {
-      success: false,
-      message: json.message,
-    };
-  }
-
-  return json;
+export interface LoginPayload {
+  email: string;
+  password: string;
 }
 
-export async function login(
-  data: LoginInput
-): Promise<ApiResponse<UserData>> {
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(data),
-  });
+export const authService = {
+  signup: async (payload: SignupPayload) => {
+    // Normalize role string to lowercase matching backend enum ("farmer" | "buyer")
+    const normalizedRole = payload.role.toLowerCase() as "farmer" | "buyer";
+    const response = await axiosInstance.post("/auth/signup", {
+      ...payload,
+      role: normalizedRole,
+    });
+    return response.data;
+  },
 
-  const json = await res.json();
+  login: async (payload: LoginPayload) => {
+    const response = await axiosInstance.post("/auth/login", payload);
+    return response.data;
+  },
 
-  if (!res.ok) {
-    throw {
-      success: false,
-      message: json.message,
-    };
-  }
+  logout: async () => {
+    const response = await axiosInstance.post("/auth/logout");
+    return response.data;
+  },
 
-  return json;
-}
+  forgotPassword: async (email: string) => {
+    const response = await axiosInstance.post("/auth/forgot-password", { email });
+    return response.data;
+  },
+};
 
-export async function logout(): Promise<ApiResponse<null>> {
-  const res = await fetch(`${API_URL}/auth/logout`, {
-    method: "POST",
-    credentials: "include",
-  });
-
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw {
-      success: false,
-      message: json.message,
-    };
-  }
-
-  return json;
-}
+export const signup = authService.signup;
+export const login = authService.login;
+export const logout = authService.logout;

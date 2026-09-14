@@ -1,35 +1,29 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
 
-const inter = Inter({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "Cropsmarket - Climate-Smart Agricultural Marketplace",
+  title: "CropsMarket - Direct Farm-Gate Agricultural Marketplace",
   description:
-    "A climate-smart marketplace connecting farmers and buyers. Trade crops, get weather forecasts, and grow your agricultural business.",
+    "Connect directly with verified local farmers. Source fresh wholesale and retail harvest at fair market prices with zero hidden middlemen.",
 };
 
 export default function RootLayout({
   children,
-}: LayoutProps<"/">) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${poppins.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-on-background font-body">
-        {children}
+    <html lang="en" className={`${manrope.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-warm-cream text-charcoal-text font-manrope">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

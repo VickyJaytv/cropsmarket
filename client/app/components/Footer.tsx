@@ -1,63 +1,130 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
+import { Sprout, Phone, Mail, MapPin, ShieldCheck } from "lucide-react";
 
-const desktopLinks = [
-  "Privacy Policy",
-  "Terms of Service",
-  "Help Center",
-  "Verified Farmers",
-  "Buyer Protection",
-];
-
-const mobileLinks = ["Privacy Policy", "Terms of Service", "Help Center"];
-
-export default function Footer() {
+export const Footer: React.FC = () => {
   return (
-    <footer id="contact" className="bg-surface-container-highest border-t border-outline-variant w-full mt-auto scroll-mt-24">
-      {/* Desktop Footer */}
-      <div className="hidden md:flex flex-row justify-between items-center px-20 py-6 w-full max-w-7xl mx-auto gap-6">
-        <div className="flex flex-col gap-2">
-          <span className="font-heading text-lg font-bold text-primary">
-            Cropsmarket
-          </span>
-          <span className="text-sm text-on-surface-variant">
-            © 2024 Cropsmarket. All rights reserved. Professional Agricultural
-            Marketplace.
-          </span>
-        </div>
-        <nav className="flex flex-wrap gap-3 text-sm justify-center">
-          {desktopLinks.map((link) => (
-            <Link
-              key={link}
-              href="#"
-              className="text-on-surface-variant hover:text-primary transition-colors"
-            >
-              {link}
+    <footer className="bg-pure-white border-t border-border-gray/60 pt-12 pb-8 mt-auto">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+          {/* Brand Col */}
+          <div className="lg:col-span-2 space-y-4">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-lg bg-deep-forest flex items-center justify-center text-pure-white">
+                <Sprout className="w-5 h-5 text-fresh-leaf" />
+              </div>
+              <span className="font-bold text-xl text-deep-forest tracking-tight">
+                Crops<span className="text-fresh-leaf">Market</span>
+              </span>
             </Link>
-          ))}
-        </nav>
-      </div>
+            <p className="text-natural-gray text-sm max-w-sm leading-relaxed">
+              Nigeria&apos;s direct farm-gate marketplace bridging commercial farmers with buyers, food processors, and commodity traders with total pricing transparency.
+            </p>
+            <div className="flex items-center gap-2 text-xs font-semibold text-deep-forest bg-soft-sage px-3 py-1.5 rounded-full w-fit">
+              <ShieldCheck className="w-4 h-4 text-fresh-leaf" />
+              Accredited Quality &amp; Verified Farmers
+            </div>
+          </div>
 
-      {/* Mobile Footer */}
-      <div className="md:hidden flex flex-col items-center px-4 py-6 w-full gap-4">
-        <div className="font-heading text-lg font-bold text-primary mb-2">
-          Cropsmarket
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-semibold text-charcoal-text text-sm mb-4">
+              Marketplace
+            </h4>
+            <ul className="space-y-2.5 text-sm text-natural-gray">
+              <li>
+                <Link href="/browse-produce" className="hover:text-deep-forest transition-colors">
+                  All Grains &amp; Cereals
+                </Link>
+              </li>
+              <li>
+                <Link href="/browse-produce?category=Legumes" className="hover:text-deep-forest transition-colors">
+                  Legumes &amp; Pulses
+                </Link>
+              </li>
+              <li>
+                <Link href="/browse-produce?category=Tubers" className="hover:text-deep-forest transition-colors">
+                  Tubers &amp; Roots
+                </Link>
+              </li>
+              <li>
+                <Link href="/browse-produce?category=Vegetables" className="hover:text-deep-forest transition-colors">
+                  Fresh Vegetables
+                </Link>
+              </li>
+              <li>
+                <Link href="/browse-produce?category=Fruits" className="hover:text-deep-forest transition-colors">
+                  Fresh Fruits
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Platform Links */}
+          <div>
+            <h4 className="font-semibold text-charcoal-text text-sm mb-4">
+              Platform
+            </h4>
+            <ul className="space-y-2.5 text-sm text-natural-gray">
+              <li>
+                <Link href="/login" className="hover:text-deep-forest transition-colors">
+                  Farmer Portal
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-deep-forest transition-colors">
+                  Buyer Terminal
+                </Link>
+              </li>
+              <li>
+                <Link href="/#faq-section" className="hover:text-deep-forest transition-colors">
+                  Escrow Protection
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="hover:text-deep-forest transition-colors">
+                  User Dashboard
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h4 className="font-semibold text-charcoal-text text-sm mb-4">
+              Contact &amp; Hubs
+            </h4>
+            <ul className="space-y-3 text-sm text-natural-gray">
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-deep-forest shrink-0 mt-0.5" />
+                <span>Agricultural Trade Hub, Oyo State, Nigeria</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-deep-forest shrink-0" />
+                <span>+234 (0) 800 CROPS MARKET</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-deep-forest shrink-0" />
+                <span>support@cropsmarket.com</span>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-2">
-          {mobileLinks.map((link) => (
-            <Link
-              key={link}
-              href="#"
-              className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
-            >
-              {link}
-            </Link>
-          ))}
-        </div>
-        <div className="text-on-surface-variant text-center opacity-80 text-xs">
-          © 2024 Cropsmarket. All rights reserved. Professional Agricultural
-          Marketplace.
+
+        {/* Bottom Bar */}
+        <div className="pt-6 border-t border-border-gray/60 flex flex-col sm:flex-row items-center justify-between text-xs text-natural-gray gap-4">
+          <p>© {new Date().getFullYear()} CropsMarket. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="#" className="hover:text-deep-forest">Privacy Policy</Link>
+            <Link href="#" className="hover:text-deep-forest">Terms of Service</Link>
+            <Link href="#" className="hover:text-deep-forest">Quality Guarantee</Link>
+          </div>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;
