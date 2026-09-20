@@ -9,7 +9,7 @@ import {
   updateProductController,
 } from "../controllers/product.controller.js";
 import { Role } from "../enums/enums.js";
-import { uploadProductImage } from "../middleware/upload.middleware.js";
+import { uploadListingImage, uploadProductImage } from "../middleware/upload.middleware.js";
 import { createListingController } from "../controllers/listing.controller.js";
 
 export const productRoutes: Router = express.Router();
@@ -18,6 +18,7 @@ productRoutes.post(
   "/:productId/listing",
   checkAuth,
   authorize(Role.FARMER),
+  uploadListingImage,
   createListingController,
 );
 productRoutes.get("/", getProductController);

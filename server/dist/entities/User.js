@@ -58,6 +58,10 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "passwordResetTokenExpiresAt", void 0);
 __decorate([
+    Column({ type: "integer", default: 1 }),
+    __metadata("design:type", Number)
+], User.prototype, "tokenVersion", void 0);
+__decorate([
     OneToOne(() => BuyerProfile, (buyerProfile) => buyerProfile.user),
     __metadata("design:type", BuyerProfile)
 ], User.prototype, "buyerProfile", void 0);

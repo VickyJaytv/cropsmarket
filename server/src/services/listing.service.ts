@@ -1,4 +1,3 @@
-import { ILike } from "typeorm";
 import { ListingRepository } from "../repositories/listing.repository.js";
 import { ProductRepository } from "../repositories/product.repository.js";
 import {

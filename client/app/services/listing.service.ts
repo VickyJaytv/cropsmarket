@@ -15,12 +15,14 @@ export interface ListingFilterParams {
 
 export interface CreateListingPayload {
   quantity: number;
-  unit: string;
+  unit: string | number;
   price: number;
   description?: string;
   locationState?: string;
   locationLGA?: string;
+  location?: string;
   availability?: boolean;
+  image?: string | File | null;
 }
 
 export const listingService = {
@@ -39,16 +41,31 @@ export const listingService = {
     return response.data;
   },
 
-  createListing: async (productId: number, payload: CreateListingPayload) => {
+  createListing: async (
+    productId: number,
+    payload: FormData | CreateListingPayload
+  ) => {
     const response = await axiosInstance.post(
       `/products/${productId}/listing`,
-      payload
+      payload,
+      payload instanceof FormData
+        ? { headers: { "Content-Type": "multipart/form-data" } }
+        : undefined
     );
     return response.data;
   },
 
-  updateListing: async (listingId: number, payload: Partial<CreateListingPayload> & { status?: string }) => {
-    const response = await axiosInstance.patch(`/listings/${listingId}`, payload);
+  updateListing: async (
+    listingId: number,
+    payload: FormData | (Partial<CreateListingPayload> & { status?: string })
+  ) => {
+    const response = await axiosInstance.patch(
+      `/listings/${listingId}`,
+      payload,
+      payload instanceof FormData
+        ? { headers: { "Content-Type": "multipart/form-data" } }
+        : undefined
+    );
     return response.data;
   },
 

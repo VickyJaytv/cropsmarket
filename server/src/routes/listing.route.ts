@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { authorize } from "../middleware/role.middleware.js";
 import { checkAuth } from "../middleware/auth.middleware.js";
 import { Role } from "../enums/enums.js";
+import { uploadListingImage } from "../middleware/upload.middleware.js";
 import {
   deleteListingController,
   getAllListingsController,
@@ -24,6 +25,7 @@ listingRoutes.patch(
   "/:listingId",
   checkAuth,
   authorize(Role.FARMER, Role.ADMIN),
+  uploadListingImage,
   updateListingController,
 );
 listingRoutes.delete(

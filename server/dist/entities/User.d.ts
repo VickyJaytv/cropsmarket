@@ -13,6 +13,7 @@ export declare class User {
     accountType: AccountType;
     passwordResetToken: string | null;
     passwordResetTokenExpiresAt: Date | null;
+    tokenVersion: number;
     buyerProfile: BuyerProfile;
     farmerProfile: FarmerProfile;
     categories: Category[];

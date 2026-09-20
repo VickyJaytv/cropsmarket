@@ -1,12 +1,15 @@
 import z from "zod";
+
 export const listingSchema = z.object({
-  quantity: z.number().positive(),
-  unit: z.number().positive(),
-  price: z.number().positive(),
-  description: z.string().trim().min(1).max(500).optional(),
-  location: z.string().trim().min(1),
+  quantity: z.coerce.number().positive(),
+  unit: z.coerce.number().positive(),
+  price: z.coerce.number().positive(),
+  description: z.string().trim().max(500).optional().nullable(),
+  location: z.string().trim().min(1).optional(),
+  locationState: z.string().trim().optional(),
+  locationLGA: z.string().trim().optional(),
   status: z.enum(["active", "sold", "paused"]).optional(),
-  image: z.string().url("invalid image url").nullable().optional(),
+  image: z.string().nullable().optional(),
 });
 
 export const listingFilterSchema = z.object({

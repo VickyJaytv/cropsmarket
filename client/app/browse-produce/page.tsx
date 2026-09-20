@@ -319,27 +319,29 @@ function BrowseProduceContent() {
                 >
                   <div className="relative h-48 bg-soft-sage overflow-hidden">
                     <Image
-                      src={getImageUrl(item.image)}
-                      alt={item.productName || "Harvest produce"}
+                      src={getImageUrl(item.image || item.product?.image)}
+                      alt={item.product?.name || item.productName || "Harvest produce"}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-3 right-3 bg-pure-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-deep-forest border border-border-gray flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
-                      {item.locationState || "Oyo State"}
+                      <span className="truncate max-w-[130px]">
+                        {item.location || (item.farmer ? `${item.farmer.lga ? item.farmer.lga + ', ' : ''}${item.farmer.state || 'Nigeria'}` : (item.locationState ? `${item.locationState} State` : "Nigeria"))}
+                      </span>
                     </div>
                   </div>
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between text-xs text-natural-gray mb-1">
-                        <span>{item.categoryName || "Grains & Crops"}</span>
+                        <span>{item.product?.category?.name || item.categoryName || "Grains & Crops"}</span>
                         <span className="font-bold text-fresh-leaf uppercase">
                           {item.status || "Active"}
                         </span>
                       </div>
-                      <h3 className="font-bold text-base text-charcoal-text group-hover:text-deep-forest transition-colors">
-                        {item.productName || "Dry White Maize"}
+                      <h3 className="font-bold text-base text-charcoal-text group-hover:text-deep-forest transition-colors line-clamp-1">
+                        {item.product?.name || item.productName || "Farm Produce"}
                       </h3>
                       <p className="text-xs text-natural-gray line-clamp-2 mt-1">
                         {item.description || "Fresh harvest available directly from certified farm gate."}
@@ -350,7 +352,7 @@ function BrowseProduceContent() {
                       <div>
                         <p className="text-[11px] text-natural-gray font-medium">Price per unit</p>
                         <p className="text-sm font-extrabold text-deep-forest">
-                          ₦{item.price ? item.price.toLocaleString() : "285,000"} / {item.unit || "Ton"}
+                          ₦{item.price ? item.price.toLocaleString() : "0"} / {String(item.unit || "Unit")}
                         </p>
                       </div>
                       <span className="inline-flex items-center gap-1 text-xs font-bold text-deep-forest bg-soft-sage px-3 py-1.5 rounded-lg group-hover:bg-deep-forest group-hover:text-pure-white transition-colors">
