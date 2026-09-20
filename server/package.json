@@ -49,7 +49,7 @@
     "typeorm": "^1.0.0"
   },
   "scripts": {
-    "dev": "tsx watch --import src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "start": "node --import ./dist/src/index.js",
     "seed:admin": "tsx src/scripts/seed.ts",
     "build": "tsc",
