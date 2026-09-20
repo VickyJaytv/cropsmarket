@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import compression from "compression";
 import CookieParser from "cookie-parser";
 import { pinoHttp } from "pino-http";
@@ -22,13 +23,35 @@ if (!process.env.JWT_SECRET) {
     process.exit(1);
 }
 const app = express();
+const allowedOrigins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    process.env.CLIENT_URL,
+].filter(Boolean);
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Accept",
+    ],
+}));
 app.use(express.json());
 app.use(compression());
 app.use(CookieParser());
 app.use(pinoHttp());
 app.use(apiLimiter);
+app.use("/uploads", express.static("uploads"));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.get("/health", (_req, res) => {
+app.get("health", (_req, res) => {
     res.json({ status: "Backend Running" });
 });
 AppDataSource.initialize()
@@ -44,10 +67,12 @@ AppDataSource.initialize()
     app.use(errorMiddleware);
     // listen to server port
     const PORT = process.env.PORT || 8090;
-    app.listen(PORT, () => console.log(`listening at http://localhost:${PORT}`));
+    app.listen(PORT, () => {
+        console.log(`listening at http://localhost:${PORT}`);
+    });
 })
-    .catch((err) => {
-    logger.error(`DB init failed: ${err}`);
+    .catch((_err) => {
+    // logger.error(`DB init failed: ${err}`);
     process.exit(1);
 });
 //# sourceMappingURL=index.js.map

@@ -15,7 +15,7 @@ const dbUsername = process.env.DB_USERNAME || "";
 const dbName = process.env.DB_NAME || "";
 const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : 3307;
 export const AppDataSource = new DataSource({
-    type: "mysql",
+    type: "postgres",
     host: "localhost",
     port: dbPort,
     username: dbUsername,
