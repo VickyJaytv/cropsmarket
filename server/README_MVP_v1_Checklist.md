@@ -52,13 +52,13 @@ Validate that farmers can list produce and buyers can discover and contact them.
 ## Phase 5: Listings
 
 - [x] Create listing
-- [ ] Upload images
-- [ ] Edit listing
-- [ ] Delete listing
-- [ ] View All listings (Admin Managed)
+- [x] Upload images
+- [x] Edit listing
+- [x] Delete listing
+- [x] View All listings (Admin Managed)
 - [x] View own listings
-- [ ] Mark listing as sold
-- [ ] Pause/activate listing
+- [x] Mark listing as sold
+- [x] Pause/activate listing
 
 Listing fields:
 
@@ -72,17 +72,17 @@ Listing fields:
 
 ## Phase 6: Marketplace
 
-- [ ] Browse listings
-- [ ] View listing details
-- [ ] Search by product
-- [ ] Filter by state
+- [x] Browse listings
+- [x] View listing details
+- [x] Search by product
+- [x] Filter by state
 <!-- - [ ] Filter by LGA -->
-- [ ] Filter by price
-- [ ] Filter by availability
+- [x] Filter by price
+- [x] Filter by availability
 
 ## Phase 7: Buyer Inquiry
 
-- [ ] Contact farmer via WhatsApp
+- [x] Contact farmer via WhatsApp
 - [ ] Record inquiry
 - [ ] View inquiry history
 
@@ -90,9 +90,9 @@ Listing fields:
 
 ### Farmer Dashboard
 
-- [ ] Overview
-- [ ] Active listings
-- [ ] Sold listings
+- [x] Overview
+- [x] Active listings
+- [x] Sold listings
 - [ ] Buyer inquiries
 
 ### Buyer Dashboard
@@ -102,15 +102,15 @@ Listing fields:
 
 ### Admin Dashboard
 
-- [ ] User management
+- [x] User management
 - [ ] Farmer verification
-- [ ] Product management
-- [ ] Listing moderation
+- [x] Product management
+- [x] Listing moderation
 - [ ] Platform statistics
 
 ## Phase 9: Security
 
-- [ ] Role-based access control
+- [x] Role-based access control
 - [x] Request validation
 - [x] Error handling
 - [x] File upload validation

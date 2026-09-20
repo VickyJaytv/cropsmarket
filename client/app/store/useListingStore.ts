@@ -2,27 +2,48 @@ import { create } from "zustand";
 
 export interface ProduceListing {
   id: number;
-  productId: number;
+  productId?: number;
   productName?: string;
   categoryName?: string;
   quantity: number;
-  unit: string;
+  unit: string | number;
   price: number;
-  description?: string;
+  description?: string | null;
+  location?: string;
   locationState?: string;
   locationLGA?: string;
   availability?: boolean;
+  isAvailable?: boolean;
   status?: "active" | "sold" | "paused";
-  image?: string;
-  farmer?: {
+  image?: string | null;
+  product?: {
     id: number;
     name: string;
-    farmName?: string;
-    phoneNumber?: string;
-    state?: string;
+    description?: string | null;
+    image?: string | null;
+    category?: {
+      id: number;
+      name: string;
+    };
+  };
+  farmer?: {
+    id: number;
+    name?: string;
+    farmName?: string | null;
+    phoneNumber?: string | null;
+    state?: string | null;
+    lga?: string | null;
     verified?: boolean;
+    user?: {
+      id: number;
+      firstName: string;
+      lastName: string;
+      phoneNumber: string;
+      email: string;
+    };
   };
   createdAt?: string;
+  updatedAt?: string;
 }
 
 interface ListingState {

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { dirname } from "path";
 import { User } from "./entities/User.js";
 import { Category } from "./entities/Category.js";
 import { Product } from "./entities/Product.js";
@@ -18,7 +18,7 @@ const dbName = process.env.DB_NAME || "";
 const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : 3307;
 
 export const AppDataSource = new DataSource({
-  type: "mysql",
+  type: "postgres",
   host: "localhost",
   port: dbPort,
   username: dbUsername,

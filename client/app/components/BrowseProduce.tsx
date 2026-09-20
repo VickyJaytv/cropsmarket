@@ -1,139 +1,192 @@
-import { MapPin, ChevronDown } from "lucide-react";
+"use client";
 
-const categories = ["All", "Grains", "Pulses", "Vegetables", "Fruits", "Spices"];
-
-const products = [
-  {
-    name: "Red Onion",
-    weight: "500 kg",
-    location: "Coimbatore, Tamil Nadu",
-    price: 20,
-    time: "2 hours ago",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBHZCMd840nN_Acj0PPRvW65MeU6qVWFyjP2TQg-3Zeoq7pyDxft9TQSReimUIo6qT1tgnI2zO-tMBCqZvD77UBh9f4oGMyammifjD_pbLZdNM9IQygjxA6R1saCUfn-GwiQpj_Kg0RZd1fKbd-ibn_sLY1AKanb3RHllW7m_GaAp8d2Y8TgK0A6xvk25wj8jA9hO_xJ2J8niOXy93VjrP0H4HU8bU5V-augBdy9mvc4GcJlsIkTQH4",
-  },
-  {
-    name: "Paddy (Raw)",
-    weight: "1000 kg",
-    location: "Thanjavur, Tamil Nadu",
-    price: 18,
-    time: "5 hours ago",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCGotIgPhLtxR_XEwz9s480QFkJGzTwc0H0PIO3CO6Jnj9pOOawLrUePtU6TuWXWB6qMZAf4k7o8QWT1_RWZpa1QrOVoCSwDbc3D1FYtmT62b20UMs-bH4WjNxWruaFBiIRxEPKa2II8avlDusmKSvuohVWBnWOyM3aMVPkQHnh7LJw7qiHZ3hbQZMcc6pAFealo5MIfqRGMm25NEFct4v459ykSp6ePVfFe2-Ev2fKc6_8tMCl4v6X",
-  },
-  {
-    name: "Tomato",
-    weight: "300 kg",
-    location: "Madurai, Tamil Nadu",
-    price: 15,
-    time: "1 day ago",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDXu88YCpS2oimynuf8nht0UUmbEGTuZcYKN2y9M2XlGXuesCaJGqtGblUrN1SjqQVUd8qDjYzfOQ4UlXIW9HMH0WsiX_l2wQ2bjACQoDNQYgC1DikPF8KGbpmynQh7YBLEeXsbC72LuYRqG8fVpAS1VZTU9ZNIGM3OaSU0VDUu874qiZiq_JNu_LGG6qKJQRxY8OeTSztRQtvSiMAU-toN7VpyGVuLHUzjxK3FloTQ2UOujvc9Ymmc",
-  },
-  {
-    name: "Green Chilli",
-    weight: "200 kg",
-    location: "Erode, Tamil Nadu",
-    price: 40,
-    time: "1 day ago",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuD7YSNf4Px4Q2oh9lmsbLX0QEE8SoIfzNm-96Jf-anRyDG315h2Q4C-oGYyar1stDdLxwivNkxhLTuoZTpQrFXQcoSxpsdC5SUUUd-CfzBgmhE4wXNqRxXq1vqZNs17XryX2gfa6GTblxOl73SadoZwNcP0ZaX0ljlRdvatR4U2YVuNECf23LVeB6llyR5Cd0qlu7pwYXtRb8FmLDrGE4HijFvMg2L5SXsZEfCoTdxV_fM7epuh9Vdo",
-  },
-];
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { MapPin, ArrowRight, Sparkles } from "lucide-react";
+import { listingService } from "../services/listing.service";
+import { productService } from "../services/product.service";
+import { ProduceListing } from "../store/useListingStore";
+import { getImageUrl } from "../utils/imageUtils";
 
 export default function BrowseProduce() {
-  return (
-    <section id="browse-produce" className="w-full max-w-7xl mx-auto px-4 md:px-20 mb-20 scroll-mt-24">
-      {/* Section Header */}
-      <div className="flex justify-between items-end mb-6 border-b border-outline-variant pb-3">
-        <h2 className="font-heading text-xl font-semibold text-on-surface">
-          Browse Produce
-        </h2>
+  const [categories, setCategories] = useState<string[]>(["All"]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [listings, setListings] = useState<ProduceListing[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        {/* Category Chips */}
-        <div className="hidden md:flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
-          {categories.map((cat, i) => (
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const res = await productService.getCategories();
+        if (res.success && Array.isArray(res.data)) {
+          setCategories(["All", ...res.data.map((c: any) => c.name)]);
+        }
+      } catch (err) {
+        console.error("Failed to load categories:", err);
+      }
+    }
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    async function fetchListings() {
+      setLoading(true);
+      try {
+        const params: any = { limit: 8 };
+        if (selectedCategory !== "All") {
+          params.category = selectedCategory;
+        }
+        const res = await listingService.getAllListings(params);
+        if (res.success && Array.isArray(res.data?.listings)) {
+          setListings(res.data.listings);
+        } else if (Array.isArray(res.data)) {
+          setListings(res.data);
+        } else {
+          setListings([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch produce listings:", err);
+        setListings([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchListings();
+  }, [selectedCategory]);
+
+  return (
+    <section
+      id="browse-produce"
+      className="w-full max-w-7xl mx-auto px-4 md:px-8 mb-20 scroll-mt-24"
+    >
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-border-gray/70 gap-4">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-soft-sage text-deep-forest text-xs font-bold mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-fresh-leaf" />
+            <span>Farm-Gate Produce</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-charcoal-text tracking-tight">
+            Featured Harvest Listings
+          </h2>
+          <p className="text-xs sm:text-sm text-natural-gray mt-1">
+            Browse verified wholesale crops available directly from local farms.
+          </p>
+        </div>
+
+        {/* Category Filter Chips */}
+        <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+          {categories.map((cat) => (
             <button
               key={cat}
-              className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wider whitespace-nowrap transition-colors ${
-                i === 0
-                  ? "bg-primary text-on-primary"
-                  : "bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-variant"
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                selectedCategory === cat
+                  ? "bg-deep-forest text-pure-white shadow-xs"
+                  : "bg-pure-white border border-border-gray text-charcoal-text hover:bg-soft-sage"
               }`}
             >
               {cat}
             </button>
           ))}
         </div>
+      </div>
 
-        {/* Sort Dropdown */}
-        <div className="hidden md:flex items-center gap-1 text-on-surface-variant text-sm cursor-pointer hover:text-primary">
-          <span>Price: Low to High</span>
-          <ChevronDown className="w-4 h-4" />
+      {/* Produce Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((n) => (
+            <div
+              key={n}
+              className="bg-pure-white rounded-2xl h-80 animate-pulse border border-border-gray"
+            />
+          ))}
         </div>
-      </div>
+      ) : listings.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {listings.map((item) => {
+            const title =
+              item.product?.name || item.productName || "Farm Produce";
+            const catName =
+              item.product?.category?.name || item.categoryName || "Crops";
+            const location =
+              item.location ||
+              (item.farmer
+                ? `${item.farmer.lga ? item.farmer.lga + ", " : ""}${item.farmer.state || "Nigeria"}`
+                : "Nigeria");
+            const priceDisplay = item.price ? item.price.toLocaleString() : "0";
+            const unitDisplay = item.unit || "Bag";
+            const imageSrc = getImageUrl(item.image || item.product?.image);
 
-      {/* Mobile Category Chips */}
-      <div className="md:hidden flex gap-2 overflow-x-auto pb-4 mb-4 hide-scrollbar">
-        {categories.map((cat, i) => (
-          <button
-            key={cat}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wider whitespace-nowrap transition-colors ${
-              i === 0
-                ? "bg-primary text-on-primary"
-                : "bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-variant"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {products.map((product) => (
-          <div
-            key={product.name}
-            className="bg-surface rounded-lg border border-outline-variant overflow-hidden soft-shadow hover:shadow-md transition-shadow cursor-pointer flex flex-col group"
-          >
-            {/* Image */}
-            <div className="relative h-48 w-full overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="p-3 flex-grow flex flex-col">
-              <h3 className="font-heading text-base font-semibold text-on-surface mb-1">
-                {product.name}
-              </h3>
-              <span className="text-sm text-on-surface-variant mb-3">
-                {product.weight}
-              </span>
-              <div className="flex items-center text-on-surface-variant text-xs mb-4 mt-auto">
-                <MapPin className="w-3.5 h-3.5 mr-1 shrink-0" />
-                <span>{product.location}</span>
-              </div>
-
-              {/* Price Row */}
-              <div className="flex justify-between items-end border-t border-outline-variant pt-3">
+            return (
+              <Link
+                key={item.id}
+                href={`/listings/${item.id}`}
+                className="bg-pure-white rounded-2xl border border-border-gray/70 overflow-hidden shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between"
+              >
                 <div>
-                  <span className="text-lg font-bold text-primary">
-                    ₹ {product.price}
-                  </span>
-                  <span className="text-sm font-normal text-on-surface-variant ml-1">
-                    / kg
+                  <div className="relative h-48 w-full bg-soft-sage overflow-hidden">
+                    <Image
+                      src={imageSrc}
+                      alt={title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2.5 right-2.5 bg-pure-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-deep-forest border border-border-gray flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      <span className="truncate max-w-[120px]">{location}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <span className="text-[11px] font-bold text-fresh-leaf uppercase tracking-wider block mb-1">
+                      {catName}
+                    </span>
+                    <h3 className="font-bold text-base text-charcoal-text group-hover:text-deep-forest transition-colors line-clamp-1">
+                      {title}
+                    </h3>
+                    <p className="text-xs text-natural-gray mt-1 line-clamp-2">
+                      {item.description || "Fresh harvest ready for warehouse dispatch or bulk pickup."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 pt-0 border-t border-border-gray/60 mt-2 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-natural-gray font-medium uppercase block">
+                      Price / Unit
+                    </span>
+                    <span className="text-base font-extrabold text-deep-forest">
+                      ₦{priceDisplay}{" "}
+                      <span className="text-xs font-normal text-natural-gray">
+                        /{unitDisplay}
+                      </span>
+                    </span>
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-deep-forest bg-soft-sage px-2.5 py-1.5 rounded-lg group-hover:bg-deep-forest group-hover:text-pure-white transition-colors">
+                    View <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
-                <span className="text-[11px] text-outline">{product.time}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="bg-pure-white p-10 rounded-2xl border border-border-gray text-center space-y-3">
+          <p className="text-sm font-semibold text-charcoal-text">
+            No produce listings available in this category yet.
+          </p>
+          <Link
+            href="/browse-produce"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-deep-forest hover:underline"
+          >
+            Explore All Produce in Marketplace <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

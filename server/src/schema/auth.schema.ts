@@ -1,6 +1,6 @@
 import { AccountType, Role } from "../enums/enums.js";
 import { z } from "zod";
-const specialCharRegex = /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>/?`~]/;
+const specialCharRegex = /[!@#$%^&*()_\-+=[\]{};:'"\\|,.<>/?`~]/;
 
 export const signUpSchema = z.object({
   firstName: z.string().trim().min(3, "Name required"),

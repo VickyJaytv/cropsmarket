@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { getUserByIdService, getUsersService } from "./admin.service.js";
-import { number } from "zod";
 
 export const getUsersController = async (
   req: Request,

@@ -10,7 +10,6 @@ import {
   getAllListingsService,
   getListingByIdService,
   getPersonalListingsService,
-  searchListingService,
   updateListingService,
 } from "../services/listing.service.js";
 import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
@@ -31,10 +30,20 @@ export const createListingController = async (
       throw new AppError("Unauthorized", 401);
     }
     const validateData = listingSchema.parse(req.body);
+
+    const location =
+      validateData.location ||
+      (validateData.locationState
+        ? validateData.locationLGA
+          ? `${validateData.locationLGA}, ${validateData.locationState} State`
+          : `${validateData.locationState} State`
+        : "Nigeria");
+
     const listingData = {
       ...validateData,
+      location,
       ...(req.file && {
-        image: `/uploads/listing/${req.file.filename}`,
+        image: `/uploads/listings/${req.file.filename}`,
       }),
     };
     const listing = await createListingService(productId, userId, listingData);
@@ -192,9 +201,16 @@ export const updateListingController = async (
 
     const validateData = listingSchema.partial().parse(req.body);
 
+    const updateData = {
+      ...validateData,
+      ...(req.file && {
+        image: `/uploads/listings/${req.file.filename}`,
+      }),
+    };
+
     const listing = await updateListingService(
       listingId,
-      validateData,
+      updateData,
       req.user?.id,
       req.user?.role === Role.ADMIN,
     );

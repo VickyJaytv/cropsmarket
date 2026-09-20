@@ -1,12 +1,6 @@
-import { CloudSun, Cloud, CloudRain, Sun, Droplets } from "lucide-react";
+"use client";
 
-const forecast = [
-  { day: "Sat", icon: Sun, temp: "23°/32°", color: "text-[#FDB813]" },
-  { day: "Sun", icon: CloudSun, temp: "22°/31°", color: "text-[#FDB813]" },
-  { day: "Mon", icon: Cloud, temp: "23°/30°", color: "text-outline-variant" },
-  { day: "Tue", icon: CloudRain, temp: "22°/31°", color: "text-outline-variant" },
-  { day: "Wed", icon: Sun, temp: "23°/32°", color: "text-[#FDB813]" },
-];
+import { CloudSun, CloudRain, Sun, Droplets, MapPin } from "lucide-react";
 
 export default function WeatherWidget() {
   return (
@@ -14,52 +8,53 @@ export default function WeatherWidget() {
       <div className="bg-surface-container-lowest rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.06)] p-4 border border-outline-variant/30">
         {/* Header */}
         <div className="flex flex-col mb-4">
-          <h2 className="font-heading text-lg font-semibold text-on-surface">
-            Coimbatore, Tamil Nadu
-          </h2>
-          <span className="text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-            Today
+          <div className="flex items-center gap-1 text-deep-forest">
+            <MapPin className="w-4 h-4" />
+            <h2 className="font-heading text-base font-bold text-on-surface">
+              Nigerian Agricultural Hubs
+            </h2>
+          </div>
+          <span className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mt-0.5">
+            Real-time Farm Region Forecast
           </span>
         </div>
 
         {/* Current Weather */}
-        <div className="flex justify-between items-center mb-6 border-b border-outline-variant/20 pb-4">
+        <div className="flex justify-between items-center mb-4 border-b border-outline-variant/20 pb-4">
           <div className="flex items-center gap-3">
-            <CloudSun className="w-12 h-12 text-[#FDB813]" fill="currentColor" />
+            <CloudSun className="w-10 h-10 text-[#FDB813]" fill="currentColor" />
             <div>
-              <div className="text-[40px] leading-none font-bold text-on-surface">
-                32°C
+              <div className="text-3xl leading-none font-extrabold text-on-surface">
+                29°C
               </div>
-              <div className="text-sm text-on-surface-variant">Partly Cloudy</div>
+              <div className="text-xs text-on-surface-variant font-medium mt-1">Oyo Grain Belt</div>
             </div>
           </div>
           <div className="text-right flex flex-col gap-1">
             <span className="text-xs font-medium text-on-surface-variant">
-              24°C / 33°C
+              Dry Harvest Weather
             </span>
             <div className="flex items-center gap-1 text-primary">
-              <Droplets className="w-4 h-4" />
-              <span className="text-xs font-medium">Rain chance 20%</span>
+              <Droplets className="w-3.5 h-3.5" />
+              <span className="text-xs font-medium">Humidity 48%</span>
             </div>
           </div>
         </div>
 
-        {/* 5-Day Forecast */}
-        <div className="flex justify-between items-center px-1">
-          {forecast.map((day) => {
-            const Icon = day.icon;
-            return (
-              <div key={day.day} className="flex flex-col items-center gap-1">
-                <span className="text-xs font-medium text-on-surface-variant">
-                  {day.day}
-                </span>
-                <Icon className={`w-5 h-5 ${day.color}`} />
-                <span className="text-xs font-medium text-on-surface">
-                  {day.temp}
-                </span>
-              </div>
-            );
-          })}
+        {/* Regional Hubs */}
+        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+          <div className="bg-soft-sage/40 p-2 rounded-lg">
+            <span className="text-[11px] text-natural-gray block">Kano Hub</span>
+            <span className="font-bold text-charcoal-text">31°C Sunny</span>
+          </div>
+          <div className="bg-soft-sage/40 p-2 rounded-lg">
+            <span className="text-[11px] text-natural-gray block">Benue Hub</span>
+            <span className="font-bold text-charcoal-text">28°C Clear</span>
+          </div>
+          <div className="bg-soft-sage/40 p-2 rounded-lg">
+            <span className="text-[11px] text-natural-gray block">Ogun Hub</span>
+            <span className="font-bold text-charcoal-text">27°C Mild</span>
+          </div>
         </div>
       </div>
     </section>

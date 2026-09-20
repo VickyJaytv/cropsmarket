@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,22 +24,30 @@ import {
   MapPin,
   Tag,
   DollarSign,
-  FileText,
+  UploadCloud,
+  X,
+  ImageIcon,
 } from "lucide-react";
+
+const nigerianStates = [
+  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
+  "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu",
+  "FCT - Abuja", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina",
+  "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo",
+  "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara",
+];
 
 export default function CreateListingPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [products, setProducts] = useState<{ id: number; name: string }[]>([
-    { id: 1, name: "Dry White Maize" },
-    { id: 2, name: "Yellow Maize" },
-    { id: 3, name: "Soybeans (Commercial Grade)" },
-    { id: 4, name: "Cassava Tubers" },
-    { id: 5, name: "Paddy Rice" },
-    { id: 6, name: "Sorghum" },
-    { id: 7, name: "Fresh Tomatoes" },
-  ]);
+  const [products, setProducts] = useState<{ id: number; name: string }[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -52,13 +61,16 @@ export default function CreateListingPage() {
 
   useEffect(() => {
     async function loadProducts() {
+      setLoadingProducts(true);
       try {
         const res = await productService.getProducts();
         if (res.success && Array.isArray(res.data) && res.data.length > 0) {
           setProducts(res.data);
         }
       } catch (err) {
-        // keep defaults if server returns error or empty
+        console.error("Failed to load products list:", err);
+      } finally {
+        setLoadingProducts(false);
       }
     }
     loadProducts();
@@ -69,15 +81,50 @@ export default function CreateListingPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<CreateListingFormData>({
-    resolver: zodResolver(createListingSchema) as any,
+    resolver: zodResolver(createListingSchema),
     defaultValues: {
       productId: 1,
-      unit: "Metric Ton",
-      availability: true,
+      quantity: 50,
+      unit: "50kg Bag",
+      price: 28000,
       locationState: "Oyo",
       locationLGA: "Ibadan North",
+      description: "",
+      availability: true,
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+    if (!allowedTypes.includes(file.type)) {
+      setImageError("Please select a valid image (JPG, PNG, or WEBP).");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError("Image file size must be less than 5MB.");
+      return;
+    }
+
+    setSelectedImage(file);
+    const objectUrl = URL.createObjectURL(file);
+    setImagePreview(objectUrl);
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const onSubmit = async (data: CreateListingFormData) => {
     setErrorMessage(null);
@@ -85,66 +132,64 @@ export default function CreateListingPage() {
     setSubmitting(true);
 
     try {
-      const payload = {
-        quantity: Number(data.quantity),
-        unit: data.unit,
-        price: Number(data.price),
-        description: data.description,
-        locationState: data.locationState,
-        locationLGA: data.locationLGA,
-        availability: Boolean(data.availability),
-      };
+      const formData = new FormData();
+      formData.append("quantity", String(data.quantity));
+      formData.append("unit", "1");
+      formData.append("price", String(data.price));
+      if (data.description) {
+        formData.append("description", data.description);
+      }
+      formData.append("locationState", data.locationState);
+      formData.append("locationLGA", data.locationLGA);
+      formData.append(
+        "location",
+        `${data.locationLGA}, ${data.locationState} State`
+      );
 
-      const res = await listingService.createListing(Number(data.productId), payload);
-      if (res.success) {
-        setSuccessMessage("Harvest listing published successfully! Redirecting to dashboard...");
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
+      const res = await listingService.createListing(data.productId, formData);
+
+      if (res.success || res.data) {
+        setSuccessMessage("Harvest listing published successfully!");
         setTimeout(() => {
           router.push("/dashboard");
-        }, 1200);
+        }, 1500);
       } else {
-        setErrorMessage(res.message || "Failed to create produce listing.");
+        setErrorMessage(res.message || "Failed to create listing.");
       }
     } catch (err: any) {
-      setErrorMessage(
-        err.response?.data?.message || "Failed to post listing. Ensure you are logged in as a Farmer."
-      );
+      console.error("Listing creation error:", err);
+      const serverMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "An error occurred while creating the listing.";
+      setErrorMessage(serverMsg);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const nigerianStates = [
-    "Oyo",
-    "Benue",
-    "Ogun",
-    "Kaduna",
-    "Kano",
-    "Taraba",
-    "Niger",
-    "Enugu",
-    "Lagos",
-    "Kwara",
-    "Plateau",
-  ];
-
   return (
-    <div className="min-h-screen flex flex-col bg-warm-cream">
+    <div className="min-h-screen flex flex-col bg-cream-bg">
       <Navbar />
 
-      <main className="pt-20 flex-1">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Breadcrumb Back */}
+      <main className="grow py-10 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
+        <div className="mb-6">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-bold text-natural-gray hover:text-deep-forest mb-6 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-deep-forest hover:text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+            <ArrowLeft className="w-4 h-4" /> Back to Farmer Dashboard
           </Link>
+        </div>
 
-          {/* Form Header */}
-          <div className="bg-pure-white p-6 sm:p-8 rounded-2xl border border-border-gray/70 shadow-2xs mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-soft-sage flex items-center justify-center text-deep-forest">
+        <div className="bg-pure-white rounded-3xl border border-border-gray/70 shadow-sm p-6 sm:p-10">
+          <div className="flex items-center justify-between pb-6 mb-8 border-b border-border-gray">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-soft-sage flex items-center justify-center">
                 <Sprout className="w-6 h-6 text-fresh-leaf" />
               </div>
               <div>
@@ -177,6 +222,69 @@ export default function CreateListingPage() {
             onSubmit={handleSubmit(onSubmit)}
             className="bg-pure-white p-6 sm:p-8 rounded-2xl border border-border-gray/70 shadow-xs space-y-6"
           >
+            {/* Produce Photo Upload */}
+            <div>
+              <label className="block text-xs font-bold text-charcoal-text uppercase mb-1.5 flex items-center gap-1.5">
+                <ImageIcon className="w-4 h-4 text-deep-forest" /> Produce Harvest Photo (Optional)
+              </label>
+
+              {!imagePreview ? (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-1 flex flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-dashed border-border-gray hover:border-deep-forest/60 rounded-2xl cursor-pointer bg-cream-bg/40 hover:bg-soft-sage/20 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-soft-sage/60 group-hover:bg-soft-sage flex items-center justify-center mb-3 transition-colors">
+                    <UploadCloud className="w-6 h-6 text-deep-forest" />
+                  </div>
+                  <p className="text-xs font-semibold text-charcoal-text mb-1">
+                    Click to browse or drag and drop photo
+                  </p>
+                  <p className="text-[11px] text-natural-gray">
+                    PNG, JPG, WEBP up to 5MB (Clear picture of harvest stock)
+                  </p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png, image/jpeg, image/webp, image/jpg"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </div>
+              ) : (
+                <div className="relative mt-2 rounded-2xl overflow-hidden border border-border-gray bg-soft-sage/30 p-2 flex items-center gap-4">
+                  <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-pure-white shrink-0 border border-border-gray">
+                    <Image
+                      src={imagePreview}
+                      alt="Listing preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="grow min-w-0">
+                    <p className="text-xs font-bold text-charcoal-text truncate">
+                      {selectedImage?.name || "Uploaded photo"}
+                    </p>
+                    <p className="text-[11px] text-natural-gray mt-0.5">
+                      {selectedImage ? `${(selectedImage.size / 1024).toFixed(1)} KB` : ""}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="mt-2 inline-flex items-center gap-1 text-xs text-error-red hover:underline font-semibold"
+                    >
+                      <X className="w-3.5 h-3.5" /> Remove Photo
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {imageError && (
+                <p className="text-xs text-error-red mt-1.5 font-medium">
+                  {imageError}
+                </p>
+              )}
+            </div>
+
             {/* Product Selection */}
             <div>
               <label className="block text-xs font-bold text-charcoal-text uppercase mb-1.5 flex items-center gap-1.5">
@@ -186,11 +294,17 @@ export default function CreateListingPage() {
                 {...register("productId", { valueAsNumber: true })}
                 className="w-full px-4 py-2.5 rounded-xl border border-border-gray text-sm text-charcoal-text bg-pure-white focus:outline-hidden focus:border-deep-forest font-medium"
               >
-                {products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
+                {loadingProducts ? (
+                  <option value="">Loading crop commodities...</option>
+                ) : products.length > 0 ? (
+                  products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">No commodities available</option>
+                )}
               </select>
               {errors.productId && (
                 <p className="text-xs text-error-red mt-1 font-medium">
@@ -317,7 +431,7 @@ export default function CreateListingPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 bg-deep-forest hover:bg-primary text-pure-white font-bold text-sm rounded-xl transition-colors shadow-xs flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-deep-forest hover:bg-primary text-pure-white font-bold text-sm rounded-xl transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               {submitting ? "Publishing Listing..." : "Publish Produce Listing"}
             </button>

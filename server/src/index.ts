@@ -37,7 +37,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like mobile apps or curl) or if origin is in allowedOrigins
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -45,8 +44,13 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-  })
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
+  }),
 );
 
 app.use(express.json());
@@ -55,9 +59,11 @@ app.use(CookieParser());
 app.use(pinoHttp());
 app.use(apiLimiter);
 
+app.use("/uploads", express.static("uploads"));
+
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get("/health", (_req: Request, res: Response) => {
+app.get("health", (_req: Request, res: Response) => {
   res.json({ status: "Backend Running" });
 });
 
@@ -76,11 +82,11 @@ AppDataSource.initialize()
 
     // listen to server port
     const PORT = process.env.PORT || 8090;
-    app.listen(PORT, () =>
-      console.log(`listening at http://localhost:${PORT}`),
-    );
+    app.listen(PORT, () => {
+      console.log(`listening at http://localhost:${PORT}`);
+    });
   })
-  .catch((err: unknown) => {
-    logger.error(`DB init failed: ${err}`);
+  .catch((_err: unknown) => {
+    // logger.error(`DB init failed: ${err}`);
     process.exit(1);
   });
