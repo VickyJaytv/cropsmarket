@@ -8,6 +8,7 @@ export const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -28,7 +29,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
-        // Clear invalid token if needed
+        localStorage.removeItem("cropsmarket_token");
+        localStorage.removeItem("cropsmarket_user");
       }
     }
     return Promise.reject(error);

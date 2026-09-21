@@ -54,16 +54,22 @@ export const signupController = async (
       accountType,
       role,
     });
+    const token = generateTokenAndCookies(res, user.id.toString(), 1);
     res.status(201).json({
       success: true,
       message: "user signed up successfully",
-      data: user,
+      data: {
+        ...user,
+        token,
+      },
+      token,
     });
   } catch (error) {
     next(error);
     logger.error(error);
   }
 };
+
 export const loginController = async (
   req: Request,
   res: Response,
@@ -72,11 +78,15 @@ export const loginController = async (
   try {
     const validateData = loginSchema.parse(req.body);
     const user: PublicUserInterface & { tokenVersion?: number } = await LoginService(validateData);
-    generateTokenAndCookies(res, user.id.toString(), user.tokenVersion ?? 1);
+    const token = generateTokenAndCookies(res, user.id.toString(), user.tokenVersion ?? 1);
     res.status(200).json({
       success: true,
       message: "user logged in successfully",
-      data: user,
+      data: {
+        ...user,
+        token,
+      },
+      token,
     });
   } catch (error) {
     next(error);
@@ -138,4 +148,3 @@ export const resetPasswordController = async (
     next(error);
   }
 };
-

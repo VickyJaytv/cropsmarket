@@ -4,9 +4,11 @@ import { UserRepository } from "../repositories/user.repository.js";
 import { UserInterface } from "./../interfaces/user.interface.js";
 import { AppError } from "../utils/AppError.js";
 import { Role } from "../enums/enums.js";
+
 export interface AuthenticatedRequest extends Request {
   user?: UserInterface;
 }
+
 export const checkAuth = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -15,7 +17,7 @@ export const checkAuth = async (
   try {
     let token = req.cookies?.token;
 
-    if (!token && req.headers.authorization?.startsWith("Bearer")) {
+    if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
     }
     if (!token) {
@@ -25,13 +27,21 @@ export const checkAuth = async (
     if (!jwtSecret) {
       throw new Error("JWT_SECRET is not defined in environment variables.");
     }
-    const verify = jwt.verify(token, jwtSecret) as {
-      userId: string;
-      tokenVersion?: number;
-    };
-    if (!verify) {
+
+    let verify: { userId: string; tokenVersion?: number };
+    try {
+      verify = jwt.verify(token, jwtSecret) as {
+        userId: string;
+        tokenVersion?: number;
+      };
+    } catch {
       throw new AppError("unauthorized invalid or expired token", 401);
     }
+
+    if (!verify || !verify.userId) {
+      throw new AppError("unauthorized invalid or expired token", 401);
+    }
+
     const user = await UserRepository.findOneBy({ id: Number(verify.userId) });
     if (!user) {
       throw new AppError("user not found", 401);
