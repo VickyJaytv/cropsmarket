@@ -13,20 +13,15 @@ import {
   MessageCircle,
   Phone,
   ArrowLeft,
-  Calendar,
-  CheckCircle2,
+    CheckCircle2,
   AlertCircle,
   Package,
   Tag,
-  DollarSign,
-  Truck,
+    Truck,
   Warehouse,
   Shield,
-  Clock,
-  Send,
-  UserCheck,
-  Building,
-} from "lucide-react";
+    Send,
+    } from "lucide-react";
 
 export default function ListingDetailPage({
   params,
@@ -36,7 +31,46 @@ export default function ListingDetailPage({
   const resolvedParams = use(params);
   const listingId = Number(resolvedParams.id);
 
-  const [listing, setListing] = useState<any | null>(null);
+  interface ListingDetailType {
+  id: number;
+  quantity: number;
+  unit: string | number;
+  price: number;
+  description?: string;
+  location?: string;
+  locationState?: string;
+  locationLGA?: string;
+  image?: string;
+  status?: string;
+  createdAt?: string;
+  productName?: string;
+  categoryName?: string;
+  product?: {
+    id: number;
+    name: string;
+    description?: string;
+    image?: string;
+    category?: {
+      id: number;
+      name: string;
+    };
+  };
+  farmer?: {
+    id: number;
+    farmName?: string;
+    address?: string;
+    state?: string;
+    lga?: string;
+    user?: {
+      firstName?: string;
+      lastName?: string;
+      phoneNumber?: string;
+      email?: string;
+    };
+  };
+}
+
+  const [listing, setListing] = useState<ListingDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +95,7 @@ export default function ListingDetailPage({
         } else {
           setError("Produce listing not found.");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to fetch listing detail:", err);
         setError("Failed to load listing information from the marketplace.");
       } finally {
@@ -124,9 +158,9 @@ export default function ListingDetailPage({
   const farmerFullName = farmer?.user
     ? `${farmer.user.firstName} ${farmer.user.lastName}`
     : "Verified Farmer";
-  const farmerPhone = farmer?.user?.phoneNumber || farmer?.phoneNumber || "08000000000";
-  const farmerState = farmer?.state || listing.locationState || "Nigeria";
-  const farmerLga = farmer?.lga || listing.locationLGA || "";
+  const farmerPhone = farmer?.user?.phoneNumber || (farmer as unknown as { phoneNumber?: string })?.phoneNumber || "08000000000";
+  const farmerState = farmer?.state || (listing as unknown as { locationState?: string })?.locationState || "Nigeria";
+  const farmerLga = farmer?.lga || (listing as unknown as { locationLGA?: string })?.locationLGA || "";
   const locationText = listing.location || `${farmerLga ? farmerLga + ", " : ""}${farmerState} State`;
   const unitPrice = Number(listing.price) || 0;
   const availableQty = Number(listing.quantity) || 0;
@@ -142,14 +176,14 @@ export default function ListingDetailPage({
       <Navbar />
 
       <main className="pt-20 grow">
-        {/* ESCROW ASSURANCE TOP RIBBON */}
+        {/* TRADE ASSURANCE TOP RIBBON */}
         <aside className="w-full bg-soft-sage text-deep-forest border-b border-border-gray/70 py-2.5 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-fresh-leaf shrink-0" />
-              <span className="font-bold text-charcoal-text">CropsMarket Escrow Protection:</span>
+              <span className="font-bold text-charcoal-text">CropsMarket Trade Protection:</span>
               <span className="text-natural-gray hidden md:inline">
-                Funds remain securely guarded in escrow until moisture, weight, and grade specs are verified on delivery.
+                Funds remain securely guarded until moisture, weight, and grade specs are verified on delivery.
               </span>
             </div>
             <span className="text-deep-forest font-bold text-[11px] flex items-center gap-1">
@@ -189,7 +223,7 @@ export default function ListingDetailPage({
                 <Tag className="w-3.5 h-3.5" /> Direct Farm-Gate Price
               </span>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-charcoal-text">
-                <Shield className="w-3.5 h-3.5 text-deep-forest" /> Escrow Protected
+                <Shield className="w-3.5 h-3.5 text-deep-forest" /> Trade Protected
               </span>
             </div>
 
@@ -206,7 +240,7 @@ export default function ListingDetailPage({
                   <span>•</span>
                   <span>Batch ID: #OYS-LST-{listing.id.toString().padStart(4, "0")}</span>
                   <span>•</span>
-                  <span>Listed on {new Date(listing.createdAt || Date.now()).toLocaleDateString()}</span>
+                  <span>Listed on {listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : "Active Batch"}</span>
                 </p>
               </div>
 
@@ -310,7 +344,7 @@ export default function ListingDetailPage({
                   <p className="text-xs sm:text-sm text-natural-gray leading-relaxed bg-warm-cream/30 p-4 rounded-xl border border-border-gray/50">
                     {listing.description ||
                       listing.product?.description ||
-                      "Freshly harvested commercial-grade agricultural produce available directly from verified farm gate with zero middlemen markup. Available for immediate weighbridge inspection, haulage scheduling, and escrow payment settlement."}
+                      "Freshly harvested commercial-grade agricultural produce available directly from verified farm gate with zero middlemen markup. Available for immediate weighbridge inspection, haulage scheduling, and secure payment settlement."}
                   </p>
                 </div>
 
@@ -401,10 +435,10 @@ export default function ListingDetailPage({
                   </a>
                 </div>
 
-                {/* Escrow Badge */}
+                {/* Protection Badge */}
                 <div className="pt-4 border-t border-border-gray/60 flex items-center gap-2 text-[11px] text-natural-gray">
                   <ShieldCheck className="w-4 h-4 text-fresh-leaf shrink-0" />
-                  <span>Escrow payment guaranteed by CropsMarket clearing protocol.</span>
+                  <span>Secure direct payment guaranteed by CropsMarket clearing protocol.</span>
                 </div>
               </div>
 

@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { useAuth } from "./context/AuthContext";
@@ -11,13 +10,13 @@ import { getImageUrl } from "./utils/imageUtils";
 import {
   ShieldCheck,
   TrendingDown,
-  Lock,
+  
   Truck,
   CheckCircle2,
   Tag,
-  Factory,
+  
   Sparkles,
-  Award,
+  
   Filter,
   FileCheck,
   ChevronDown,
@@ -31,8 +30,7 @@ import {
 } from "lucide-react";
 
 export default function LandingPage() {
-  const router = useRouter();
-  const { isBuyer } = useAuth();
+    const { isBuyer } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const categoriesPills = [
@@ -44,21 +42,10 @@ export default function LandingPage() {
     { label: "Fresh Tomatoes", category: "Vegetables" },
   ];
 
-  const partners = [
-    { name: "Flour Mills Nig.", icon: Factory, color: "text-deep-forest" },
-    { name: "Nestlé Nigeria", icon: Award, color: "text-primary" },
-    { name: "Olam Agri", icon: Sparkles, color: "text-fresh-leaf" },
-    { name: "Honeywell Group", icon: Store, color: "text-harvest-gold" },
-    { name: "Kobo360 Haulage", icon: Truck, color: "text-info-blue" },
-    { name: "Grand Cereals", icon: Tag, color: "text-deep-forest" },
-    { name: "Bisi Supermarkets", icon: Store, color: "text-fresh-leaf" },
-    { name: "Dangote Agro", icon: Factory, color: "text-deep-forest" },
-  ];
-
   const faqs = [
     {
-      q: "How does CropsMarket escrow protection guarantee my trade?",
-      a: "Funds deposited by corporate buyers or agro-processors are securely locked in Moniepoint escrow and are only released to the farmer after physical quality inspection, moisture audit, and signed weighbridge departure at the farm gate.",
+      q: "How does CropsMarket guarantee secure trade settlement?",
+      a: "Funds deposited by corporate buyers or agro-processors are securely protected and are only released to the farmer after physical quality inspection, moisture audit, and signed weighbridge departure at the farm gate.",
     },
     {
       q: "How are produce quality and moisture levels verified?",
@@ -231,12 +218,12 @@ export default function LandingPage() {
                 Why Leading Agro-Buyers Trust CropsMarket
               </h2>
               <p className="text-natural-gray text-base mt-3">
-                Engineered to solve market opacity, commodity price inflation, and quality disputes through transparent gate sourcing and secured escrow settlement.
+                Engineered to solve market opacity, commodity price inflation, and quality disputes through transparent gate sourcing and secured settlement.
               </p>
             </div>
 
-            {/* 4 Core Pillars Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* 3 Core Pillars Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Pillar 1 */}
               <div className="bg-pure-white rounded-xl p-6 shadow-xs hover:shadow-md transition-all border border-border-gray/60 flex flex-col justify-between group">
                 <div>
@@ -279,25 +266,6 @@ export default function LandingPage() {
               <div className="bg-pure-white rounded-xl p-6 shadow-xs hover:shadow-md transition-all border border-border-gray/60 flex flex-col justify-between group">
                 <div>
                   <div className="w-12 h-12 rounded-xl bg-soft-sage flex items-center justify-center text-deep-forest mb-4 group-hover:bg-deep-forest group-hover:text-pure-white transition-colors">
-                    <Lock className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-lg font-bold text-charcoal-text mb-2">
-                    Moniepoint Escrow Protection
-                  </h3>
-                  <p className="text-sm text-natural-gray leading-relaxed">
-                    Your payments are safely held in an institutional escrow account and released only when weighbridge tonnage and quality specs match your signed bill.
-                  </p>
-                </div>
-                <div className="mt-6 pt-4 border-t border-border-gray/40 flex items-center gap-1.5 text-fresh-leaf text-xs font-bold">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Bank-grade safety guarantee</span>
-                </div>
-              </div>
-
-              {/* Pillar 4 */}
-              <div className="bg-pure-white rounded-xl p-6 shadow-xs hover:shadow-md transition-all border border-border-gray/60 flex flex-col justify-between group">
-                <div>
-                  <div className="w-12 h-12 rounded-xl bg-soft-sage flex items-center justify-center text-deep-forest mb-4 group-hover:bg-deep-forest group-hover:text-pure-white transition-colors">
                     <Truck className="w-6 h-6" />
                   </div>
                   <h3 className="text-lg font-bold text-charcoal-text mb-2">
@@ -316,30 +284,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* TRUSTED PARTNERS CAROUSEL */}
-        <section className="py-12 bg-soft-sage border-b border-border-gray/60">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-xs font-bold uppercase tracking-wider text-natural-gray mb-8">
-              Trusted by Leading Agribusinesses, FMCG Leaders &amp; Food Processors Across West Africa
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 items-center">
-              {partners.map((partner, idx) => {
-                const IconComponent = partner.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="bg-pure-white/80 hover:bg-pure-white border border-border-gray/60 rounded-xl p-3 flex flex-col items-center justify-center text-center transition-all shadow-2xs group cursor-pointer"
-                  >
-                    <IconComponent className={`w-6 h-6 ${partner.color} transition-colors mb-1.5`} />
-                    <span className="text-xs font-bold text-natural-gray group-hover:text-deep-forest transition-colors line-clamp-1">
-                      {partner.name}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        
 
         {/* HOW IT WORKS SECTION */}
         <section className="w-full bg-soft-sage py-16 lg:py-24 border-t border-border-gray/60">
@@ -398,14 +343,14 @@ export default function LandingPage() {
                     03
                   </div>
                   <h3 className="text-lg font-bold text-charcoal-text mb-2">
-                    Secure Escrow Deposit
+                    Secure Payment Deposit
                   </h3>
                   <p className="text-xs text-natural-gray leading-relaxed">
-                    Buyers deposit payment into Moniepoint Escrow. Funds are protected and only disbursed once produce arrives and weighbridge tonnage is signed off.
+                    Buyers deposit payment securely into our verified vault. Funds are protected and only disbursed once produce arrives and weighbridge tonnage is signed off.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border-gray/40 flex items-center gap-1.5 text-fresh-leaf text-xs font-bold">
-                  <ShieldCheck className="w-4 h-4" /> 100% Escrow protected
+                  <ShieldCheck className="w-4 h-4" /> 100% Trade Protected
                 </div>
               </div>
 
@@ -534,7 +479,7 @@ export default function LandingPage() {
                 Got Questions? We Have Answers
               </h2>
               <p className="text-natural-gray text-sm mt-2">
-                Everything you need to know about sourcing, escrow protection, haulage, and selling directly on CropsMarket.
+                Everything you need to know about sourcing, secure trade, haulage, and selling directly on CropsMarket.
               </p>
             </div>
 

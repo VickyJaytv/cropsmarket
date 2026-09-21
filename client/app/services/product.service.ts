@@ -16,3 +16,10 @@ export const productService = {
     return response.data;
   },
 };
+
+export const categoryService = {
+  getAllCategories: async () => {
+    const response = await axiosInstance.get("/categories");
+    return response.data;
+  },
+};

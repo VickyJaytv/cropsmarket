@@ -20,7 +20,9 @@ import {
 } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import { authService } from "@/app/services/auth.service";
 import { useAuthStore } from "@/app/store/authStore";
+import { useAuth } from "@/app/context/AuthContext";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid business email address"),
@@ -34,8 +36,9 @@ function AuthFormContent() {
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/dashboard";
 
-  const { login, loading } = useAuthStore();
-
+  const { setUser: setStoreUser } = useAuthStore();
+  const { login: setAuthLogin } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -51,24 +54,43 @@ function AuthFormContent() {
   const onLoginSubmit = async (data: LoginFormData) => {
     setErrorMessage(null);
     setSuccessMessage(null);
+    setLoading(true);
 
-    const result = await login(data.email, data.password);
-    if (!result.success) {
-      setErrorMessage(result.error || "Authentication failed. Please check your credentials.");
-      return;
+    try {
+      const res = await authService.login(data);
+      if (res.success || res.status === "success" || res.data) {
+        const user = res.data;
+        const token = res.token || res.data?.token || "";
+        if (typeof window !== "undefined") {
+          if (token) localStorage.setItem("cropsmarket_token", token);
+          if (user) localStorage.setItem("cropsmarket_user", JSON.stringify(user));
+        }
+        setAuthLogin(token, user);
+        setStoreUser(user);
+        setSuccessMessage("Authentication successful! Redirecting to workspace...");
+        setTimeout(() => {
+          router.push(redirectPath);
+        }, 400);
+      } else {
+        setErrorMessage(res.message || "Authentication failed. Please check your credentials.");
+      }
+    } catch (err: unknown) {
+      const errorObj = err as { response?: { data?: { message?: string | string[] } } };
+      const rawMsg = errorObj?.response?.data?.message;
+      const serverMsg = Array.isArray(rawMsg)
+        ? rawMsg.join(", ")
+        : (typeof rawMsg === "string" ? rawMsg : "Authentication failed. Please check your credentials.");
+      setErrorMessage(serverMsg);
+    } finally {
+      setLoading(false);
     }
-
-    setSuccessMessage("Authentication successful! Redirecting to workspace...");
-    setTimeout(() => {
-      router.push(redirectPath);
-    }, 600);
   };
 
   return (
     <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8">
       <div className="bg-pure-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 border border-border-gray/70 min-h-[580px] lg:min-h-[640px]">
         
-        {/* LEFT COLUMN: Agricultural Escrow & Market Value Props */}
+        {/* LEFT COLUMN: Agricultural Trade & Market Value Props */}
         <div className="lg:col-span-5 bg-deep-forest p-8 lg:p-10 text-pure-white flex flex-col justify-between relative overflow-hidden">
           {/* Subtle Ambient Background Gradients */}
           <div className="absolute -top-24 -left-24 w-72 h-72 bg-fresh-leaf/20 rounded-full blur-3xl pointer-events-none" />
@@ -109,11 +131,11 @@ function AuthFormContent() {
 
             <div className="flex items-start gap-3 bg-white/5 backdrop-blur-xs p-3 rounded-xl border border-white/10">
               <div className="w-8 h-8 rounded-full bg-fresh-leaf/30 flex items-center justify-center shrink-0 mt-0.5 text-emerald-300">
-                <Lock className="w-4 h-4" />
+                <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-xs font-bold text-pure-white">Moniepoint Escrow Vault</p>
-                <p className="text-[11px] text-soft-sage/80">Settlement releases only after quality confirmation at destination.</p>
+                <p className="text-xs font-bold text-pure-white">Verified Farm Gate Sourcing</p>
+                <p className="text-[11px] text-soft-sage/80">Every crop batch is sourced directly from KYC-vetted Nigerian farms.</p>
               </div>
             </div>
 
@@ -137,7 +159,7 @@ function AuthFormContent() {
               <span className="text-[11px] text-pure-white ml-2 font-bold">180 MT Fulfilled</span>
             </div>
             <p className="text-[11px] text-soft-sage italic leading-relaxed">
-              &ldquo;We secured 180 metric tons of export-grade soybeans and yellow maize without payment disputes. Escrow protection gives our executive board complete peace of mind.&rdquo;
+              &ldquo;We secured 180 metric tons of export-grade soybeans and yellow maize without payment disputes. Verified trade security gives our executive board complete peace of mind.&rdquo;
             </p>
             <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[11px]">
               <span className="font-bold text-pure-white">AgroAllied Mills Ltd, Ibadan</span>
@@ -159,7 +181,7 @@ function AuthFormContent() {
                 Welcome Back to CropsMarket
               </h1>
               <p className="text-xs sm:text-sm text-natural-gray mt-1">
-                Log in to monitor live commodity bids, manage storage manifests, and track your escrow transactions.
+                Log in to monitor live commodity bids, manage storage manifests, and track your trade transactions.
               </p>
             </div>
 
@@ -217,7 +239,7 @@ function AuthFormContent() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-natural-gray hover:text-charcoal-text"
+                    className="absolute right-3 top-2.5 text-natural-gray hover:text-charcoal-text cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>

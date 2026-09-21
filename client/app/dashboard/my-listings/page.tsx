@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,20 +12,16 @@ import { getImageUrl } from "../../utils/imageUtils";
 import {
   PlusCircle,
   Package,
-  TrendingUp,
-  AlertCircle,
+    AlertCircle,
   Trash2,
   PauseCircle,
   PlayCircle,
-  Tag,
-  CheckCircle2,
+    CheckCircle2,
   RefreshCw,
   MapPin,
   ExternalLink,
   Search,
-  SlidersHorizontal,
-  ArrowRight,
-  ShieldCheck,
+      ShieldCheck,
   DollarSign,
   Boxes,
 } from "lucide-react";
@@ -33,7 +29,29 @@ import {
 export default function MyListingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const [listings, setListings] = useState<any[]>([]);
+  interface MyListingItem {
+  id: number;
+  quantity: number;
+  unit: string | number;
+  price: number;
+  description?: string;
+  location?: string;
+  image?: string;
+  status?: string;
+  createdAt?: string;
+  productName?: string;
+  categoryName?: string;
+  product?: {
+    id: number;
+    name: string;
+    image?: string;
+    category?: {
+      name: string;
+    };
+  };
+}
+
+  const [listings, setListings] = useState<MyListingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "sold" | "paused">("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,8 +68,7 @@ export default function MyListingsPage() {
     }
   }, [isAuthenticated, authLoading, user, router]);
 
-  const loadPersonalListings = async () => {
-    setLoading(true);
+  const loadPersonalListings = useCallback(async () => {
     setActionError(null);
     try {
       const res = await listingService.getPersonalListings();
@@ -62,19 +79,26 @@ export default function MyListingsPage() {
       } else {
         setListings([]);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to load personal listings:", err);
       setActionError("Could not load your listings from the marketplace.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadPersonalListings();
+    let ignore = false;
+    async function init() {
+      if (isAuthenticated && !ignore) {
+        await loadPersonalListings();
+      }
     }
-  }, [isAuthenticated]);
+    void init();
+    return () => {
+      ignore = true;
+    };
+  }, [isAuthenticated, loadPersonalListings]);
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to permanently delete this produce listing?")) {
@@ -200,14 +224,14 @@ export default function MyListingsPage() {
 
           <div className="bg-pure-white border border-border-gray/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-natural-gray mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider">Escrow Security</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">Trade Security</span>
               <div className="w-8 h-8 rounded-lg bg-soft-sage flex items-center justify-center text-fresh-leaf">
                 <ShieldCheck className="w-4 h-4" />
               </div>
             </div>
             <div>
               <h3 className="text-2xl font-extrabold text-charcoal-text">100% Protected</h3>
-              <p className="text-xs text-natural-gray mt-1">Guaranteed neutral escrow clearing</p>
+              <p className="text-xs text-natural-gray mt-1">Guaranteed secure payment clearing</p>
             </div>
           </div>
 

@@ -80,7 +80,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <Link href="/#faq-section" className="hover:text-deep-forest transition-colors">
-                  Escrow Protection
+                  Trade Protection
                 </Link>
               </li>
               <li>

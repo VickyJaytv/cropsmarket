@@ -1,53 +1,41 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer";
+import Link from "next/link";
 import {
-  Sprout,
   ShieldCheck,
-  CheckCircle2,
-  TrendingUp,
-  Building2,
-  Truck,
-  Users,
   Award,
+  Truck,
   ArrowRight,
-  MapPin,
-  Lock,
   Boxes,
+  Lock,
 } from "lucide-react";
+import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-warm-cream">
       <Navbar />
 
-      <main className="pt-20 grow">
-        {/* 1. HERO SECTION */}
-        <section className="relative bg-deep-forest text-pure-white py-16 sm:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-20 pointer-events-none"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&q=80&w=1400')",
-            }}
-          />
+      <main className="pt-20 flex-1">
+        {/* 1. HERO MISSION SECTION */}
+        <section className="bg-deep-forest text-pure-white py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#40916c_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
-          <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-emerald-300 mx-auto">
+          <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs font-bold uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4 text-harvest-gold" />
-              <span>Nigeria's Agricultural Clearinghouse</span>
+              <span>Institutional Commodity Exchange</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-              Transforming Agricultural Trade Through Direct Farm-Gate Escrow
+              Transforming Agricultural Trade Through Direct Farm-Gate Connectivity
             </h1>
 
             <p className="text-sm sm:text-base text-soft-sage/90 max-w-3xl mx-auto leading-relaxed">
-              CropsMarket is Nigeria&apos;s direct farm-gate clearinghouse connecting commercial farming cooperatives with industrial food processors, exporters, and wholesale buyers under institutional escrow security.
+              CropsMarket is Nigeria&apos;s direct farm-gate clearinghouse connecting commercial farming cooperatives with industrial food processors, exporters, and wholesale buyers under institutional trade security.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -89,9 +77,9 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-xl bg-soft-sage text-deep-forest flex items-center justify-center font-bold">
                 <Lock className="w-6 h-6 text-fresh-leaf" />
               </div>
-              <h4 className="text-lg font-bold text-charcoal-text">Institutional Escrow Vault</h4>
+              <h4 className="text-lg font-bold text-charcoal-text">Institutional Trade Vault</h4>
               <p className="text-xs sm:text-sm text-natural-gray leading-relaxed">
-                Buyer funds stay securely locked in neutral escrow accounts and are only disbursed after digital weighbridge and moisture compliance sign-off.
+                Buyer funds stay securely protected and are only disbursed after digital weighbridge and moisture compliance sign-off.
               </p>
             </div>
 

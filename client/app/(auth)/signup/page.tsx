@@ -20,13 +20,13 @@ import {
 } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
-import { useAuthStore } from "@/app/store/authStore";
+import { authService, SignupPayload } from "@/app/services/auth.service";
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signup, loading } = useAuthStore();
 
   const [role, setRole] = useState<"farmer" | "buyer">("buyer");
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -73,7 +73,7 @@ export default function SignupPage() {
       errors.password = "Password must contain at least 1 lowercase letter";
     } else if (!/[0-9]/.test(formData.password)) {
       errors.password = "Password must contain at least 1 number";
-    } else if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(formData.password)) {
+    } else if (!/[!@#$%^&*()_+\-=[\]{};':"\|,.<>/?]/.test(formData.password)) {
       errors.password = "Password must contain at least 1 special character";
     }
 
@@ -111,27 +111,38 @@ export default function SignupPage() {
     setSuccessMessage(null);
 
     if (!validate()) return;
+    setLoading(true);
 
-    const payload = {
+    const payload: SignupPayload = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
       email: formData.email.trim(),
       phoneNumber: formData.phoneNumber.trim().replace(/\s+/g, ""),
       password: formData.password,
       role: role,
+      accountType: "INDIVIDUAL",
     };
 
-    const res = await signup(payload);
-
-    if (!res.success) {
-      setErrorMessage(res.error || "Registration failed. Please verify your details.");
-      return;
+    try {
+      const res = await authService.signup(payload);
+      if (res.status === "success" || res.data) {
+        setSuccessMessage("Account registered successfully! Redirecting to login portal...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 1200);
+      } else {
+        setErrorMessage(res.message || "Registration failed. Please verify your details.");
+      }
+    } catch (err: unknown) {
+      const errorObj = err as { response?: { data?: { message?: string | string[] } } };
+      const rawMsg = errorObj?.response?.data?.message;
+      const serverMsg = Array.isArray(rawMsg)
+        ? rawMsg.join(", ")
+        : (typeof rawMsg === "string" ? rawMsg : "Registration failed. Please verify your details.");
+      setErrorMessage(serverMsg);
+    } finally {
+      setLoading(false);
     }
-
-    setSuccessMessage("Account registered successfully! Redirecting to login portal...");
-    setTimeout(() => {
-      router.push("/login");
-    }, 1200);
   };
 
   // Live password validation checklist
@@ -140,7 +151,7 @@ export default function SignupPage() {
     { id: "upper", label: "Uppercase", valid: /[A-Z]/.test(formData.password) },
     { id: "lower", label: "Lowercase", valid: /[a-z]/.test(formData.password) },
     { id: "num", label: "Number", valid: /[0-9]/.test(formData.password) },
-    { id: "spec", label: "Special char", valid: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(formData.password) },
+    { id: "spec", label: "Special char", valid: /[!@#$%^&*()_+\-=[\]{};':"\|,.<>/?]/.test(formData.password) },
   ];
 
   return (
@@ -171,7 +182,7 @@ export default function SignupPage() {
                   <h2 className="text-xl sm:text-2xl font-extrabold text-pure-white tracking-tight leading-snug">
                     {role === "farmer"
                       ? "List Verified Harvests at Institutional Farm-Gate Prices"
-                      : "Source Verified Agricultural Commodities with Escrow Protection"}
+                      : "Source Verified Agricultural Commodities with Direct Trade Protection"}
                   </h2>
                   <p className="text-xs text-soft-sage mt-2 leading-relaxed">
                     Join thousands of accredited farmers, millers, and corporate grain aggregators trading securely on Nigeria&apos;s digital agricultural exchange.
@@ -196,8 +207,8 @@ export default function SignupPage() {
                     <Lock className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-pure-white">Guaranteed Escrow Disbursements</p>
-                    <p className="text-[10px] text-soft-sage/80">Payments are locked in Moniepoint escrow until delivery inspection passes.</p>
+                    <p className="text-xs font-bold text-pure-white">Guaranteed Direct Settlements</p>
+                    <p className="text-[10px] text-soft-sage/80">Payments are secured until delivery inspection passes.</p>
                   </div>
                 </div>
               </div>
@@ -444,7 +455,7 @@ export default function SignupPage() {
                       <span>
                         I agree to the CropsMarket{" "}
                         <span className="font-bold text-deep-forest underline">Terms of Service</span>,{" "}
-                        <span className="font-bold text-deep-forest underline">Escrow Protocol</span>, and{" "}
+                        <span className="font-bold text-deep-forest underline">Settlement Protocol</span>, and{" "}
                         <span className="font-bold text-deep-forest underline">Privacy Policy</span>.
                       </span>
                     </label>
