@@ -12,18 +12,36 @@ import {
   LogOut,
   LayoutDashboard,
   PlusCircle,
+  Boxes,
+  Store,
+  UserPlus,
 } from "lucide-react";
 
 export const Navbar: React.FC = () => {
-  const { user, isAuthenticated, isBuyer, isFarmer, logout } = useAuth();
+  const { user, isAuthenticated, isFarmer, isBuyer, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const navLinks = [
-    { label: "Home", href: "/" },
-    ...(isBuyer ? [{ label: "Browse produce", href: "/browse-produce" }] : []),
-    { label: "About", href: "/#about" },
-  ];
+  // Dynamic role-based navigation links
+  const navLinks = isFarmer
+    ? [
+        { label: "Home", href: "/" },
+        { label: "My Listings", href: "/dashboard/my-listings" },
+        { label: "Create Listing", href: "/dashboard/create-listing" },
+        { label: "About", href: "/about" },
+      ]
+    : isBuyer
+    ? [
+        { label: "Home", href: "/" },
+        { label: "Browse Produce", href: "/browse-produce" },
+        { label: "Dashboard", href: "/dashboard" },
+        { label: "About", href: "/about" },
+      ]
+    : [
+        { label: "Home", href: "/" },
+        { label: "Browse Produce", href: "/browse-produce" },
+        { label: "About", href: "/about" },
+      ];
 
   const isActive = (path: string) => pathname === path;
 
@@ -62,37 +80,54 @@ export const Navbar: React.FC = () => {
         <div className="hidden sm:flex items-center gap-3">
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              {isFarmer && (
+              {isFarmer ? (
+                <>
+                  <Link
+                    href="/dashboard/create-listing"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-deep-forest bg-soft-sage hover:bg-border-gray/60 rounded-lg transition-colors"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    + Post Listing
+                  </Link>
+                  <Link
+                    href="/dashboard/my-listings"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-pure-white bg-deep-forest hover:bg-primary rounded-lg shadow-xs transition-colors"
+                  >
+                    <Boxes className="w-4 h-4" />
+                    My Listings
+                  </Link>
+                </>
+              ) : (
                 <Link
-                  href="/dashboard/create-listing"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-deep-forest bg-soft-sage hover:bg-border-gray/60 rounded-lg transition-colors"
+                  href="/dashboard"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-pure-white bg-deep-forest hover:bg-primary rounded-lg shadow-xs transition-colors"
                 >
-                  <PlusCircle className="w-4 h-4" />
-                  Post Listing
+                  <LayoutDashboard className="w-4 h-4" />
+                  Buyer Dashboard
                 </Link>
               )}
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-pure-white bg-deep-forest hover:bg-primary rounded-lg shadow-xs transition-colors"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
-              </Link>
               <button
                 onClick={() => logout()}
-                className="p-2 text-natural-gray hover:text-error-red transition-colors"
+                className="p-2 text-natural-gray hover:text-error-red transition-colors cursor-pointer"
                 title="Logout"
               >
                 <LogOut className="w-5 h-5" />
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold text-pure-white bg-deep-forest hover:bg-primary rounded-lg shadow-xs transition-colors"
+                className="inline-flex items-center justify-center px-4 py-2 text-xs sm:text-sm font-bold text-charcoal-text hover:text-deep-forest hover:bg-soft-sage rounded-lg transition-colors"
               >
                 Login
+              </Link>
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-bold text-pure-white bg-deep-forest hover:bg-primary rounded-lg shadow-xs transition-colors"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Sign Up</span>
               </Link>
             </div>
           )}
@@ -135,22 +170,33 @@ export const Navbar: React.FC = () => {
                   <UserIcon className="w-4 h-4" />
                   {user?.firstName} {user?.lastName} ({user?.role})
                 </div>
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-deep-forest text-pure-white rounded-lg text-sm font-semibold"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                {isFarmer && (
+                {isFarmer ? (
+                  <>
+                    <Link
+                      href="/dashboard/my-listings"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full py-2.5 bg-deep-forest text-pure-white rounded-lg text-sm font-semibold"
+                    >
+                      <Boxes className="w-4 h-4" />
+                      My Produce Listings
+                    </Link>
+                    <Link
+                      href="/dashboard/create-listing"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full py-2.5 bg-soft-sage text-deep-forest rounded-lg text-sm font-semibold"
+                    >
+                      <PlusCircle className="w-4 h-4" />
+                      Create Produce Listing
+                    </Link>
+                  </>
+                ) : (
                   <Link
-                    href="/dashboard/create-listing"
+                    href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-soft-sage text-deep-forest rounded-lg text-sm font-semibold"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-deep-forest text-pure-white rounded-lg text-sm font-semibold"
                   >
-                    <PlusCircle className="w-4 h-4" />
-                    Create Produce Listing
+                    <LayoutDashboard className="w-4 h-4" />
+                    Buyer Dashboard
                   </Link>
                 )}
                 <button
@@ -165,13 +211,20 @@ export const Navbar: React.FC = () => {
                 </button>
               </>
             ) : (
-              <div className="pt-2">
+              <div className="grid grid-cols-2 gap-2 pt-2">
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center py-2.5 text-center text-sm font-semibold bg-deep-forest text-pure-white rounded-lg"
+                  className="flex items-center justify-center py-2.5 text-center text-sm font-semibold bg-soft-sage text-deep-forest rounded-lg"
                 >
                   Login
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center py-2.5 text-center text-sm font-semibold bg-deep-forest text-pure-white rounded-lg"
+                >
+                  Sign Up
                 </Link>
               </div>
             )}

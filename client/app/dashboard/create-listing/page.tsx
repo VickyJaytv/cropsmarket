@@ -39,7 +39,7 @@ const nigerianStates = [
 
 export default function CreateListingPage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [products, setProducts] = useState<{ id: number; name: string }[]>([]);
@@ -54,10 +54,14 @@ export default function CreateListingPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push("/login");
+    if (!authLoading) {
+      if (!isAuthenticated) {
+        router.push("/login");
+      } else if (user && (user.role || "").toLowerCase() !== "farmer") {
+        router.push("/dashboard");
+      }
     }
-  }, [isAuthenticated, authLoading, router]);
+  }, [isAuthenticated, authLoading, user, router]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -288,14 +292,14 @@ export default function CreateListingPage() {
             {/* Product Selection */}
             <div>
               <label className="block text-xs font-bold text-charcoal-text uppercase mb-1.5 flex items-center gap-1.5">
-                <Tag className="w-4 h-4 text-deep-forest" /> Select Crop Commodity
+                <Tag className="w-4 h-4 text-deep-forest" /> Select Product
               </label>
               <select
                 {...register("productId", { valueAsNumber: true })}
                 className="w-full px-4 py-2.5 rounded-xl border border-border-gray text-sm text-charcoal-text bg-pure-white focus:outline-hidden focus:border-deep-forest font-medium"
               >
                 {loadingProducts ? (
-                  <option value="">Loading crop commodities...</option>
+                  <option value="">Loading products...</option>
                 ) : products.length > 0 ? (
                   products.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -303,7 +307,7 @@ export default function CreateListingPage() {
                     </option>
                   ))
                 ) : (
-                  <option value="">No commodities available</option>
+                  <option value="">No products available</option>
                 )}
               </select>
               {errors.productId && (

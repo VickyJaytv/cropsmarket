@@ -44,7 +44,7 @@ export class User {
   @Column({ type: "varchar", nullable: true })
   passwordResetToken!: string | null;
 
-  @Column({ type: "datetime", nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   passwordResetTokenExpiresAt!: Date | null;
 
   @Column({ type: "integer", default: 1 })

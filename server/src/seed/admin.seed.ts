@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../entities/User.js";
 import { UserRepository } from "../repositories/user.repository.js";
-import { Role } from "../enums/enums.js";
+import { Role, AccountType } from "../enums/enums.js";
 
 export const seedAdmin = async () => {
   const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD!, 12);
@@ -16,6 +16,7 @@ export const seedAdmin = async () => {
       phoneNumber: process.env.ADMIN_PHONE_NUMBER!,
       password: hashedPassword,
       role: Role.ADMIN,
+      accountType: AccountType.INDIVIDUAL,
     })
     .orIgnore()
     .execute();

@@ -12,10 +12,10 @@ import { FarmerProfile } from "./entities/FarmerProfile.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const dbPassword = process.env.DB_PASSWORD || "";
-const dbUsername = process.env.DB_USERNAME || "";
-const dbName = process.env.DB_NAME || "";
-const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : 3307;
+const dbPassword = process.env.POSTGRES_PASSWORD || "";
+const dbUsername = process.env.POSTGRES_USER || "";
+const dbName = process.env.POSTGRES_DB || "cropsmarket";
+const dbPort = process.env.POSTGRES_PORT ? Number(process.env.POSTGRES_PORT) : 5432;
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -26,8 +26,6 @@ export const AppDataSource = new DataSource({
   database: dbName,
   synchronize: process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test",
   logging: false,
-  // entities: [__dirname + "/../entities/*.{ts,js}"],
-  // migrations: [__dirname + "/../migrations/*.{ts,js}"],
   entities: [User, Category, Product, Listing, BuyerProfile, FarmerProfile],
   migrations: [],
 });
