@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -22,25 +22,63 @@ import {
   CheckCircle2,
   RefreshCw,
   MapPin,
-  ExternalLink,
-  ArrowRight,
+    ArrowRight,
   ShieldCheck,
   DollarSign,
   Boxes,
   Store,
   MessageCircle,
-  Phone,
-  Search,
+    Search,
   Building2,
   Truck,
-  Sparkles,
-  Layers,
-  X,
+      X,
 } from "lucide-react";
 
 // ==========================================
 // 1. FARMER DASHBOARD VIEW (NO BROWSE PRODUCE)
 // ==========================================
+interface DashboardListingItem {
+  id: number;
+  quantity: number;
+  unit: string | number;
+  price: number;
+  description?: string;
+  location?: string;
+  image?: string;
+  status?: string;
+  createdAt?: string;
+  productName?: string;
+  categoryName?: string;
+  product?: {
+    id: number;
+    name: string;
+    image?: string;
+    category?: {
+      name: string;
+    };
+  };
+  farmer?: {
+    id: number;
+    farmName?: string;
+    state?: string;
+    lga?: string;
+    user?: {
+      firstName?: string;
+      lastName?: string;
+      phoneNumber?: string;
+    };
+  };
+}
+
+interface DashboardUserItem {
+  id?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  role?: string;
+}
+
 function FarmerDashboardView({
   user,
   personalListings,
@@ -51,8 +89,8 @@ function FarmerDashboardView({
   actionError,
   actionSuccess,
 }: {
-  user: any;
-  personalListings: any[];
+  user: DashboardUserItem | null;
+  personalListings: DashboardListingItem[];
   loading: boolean;
   loadPersonalListings: () => void;
   handleDelete: (id: number) => void;
@@ -61,7 +99,7 @@ function FarmerDashboardView({
   actionSuccess: string | null;
 }) {
   const [productsModalOpen, setProductsModalOpen] = useState(false);
-  const [catalogProducts, setCatalogProducts] = useState<any[]>([]);
+  const [catalogProducts, setCatalogProducts] = useState<Array<{ id: number; name: string; description?: string; image?: string; category?: { name: string } }>>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
 
   const activeCount = personalListings.filter((l) => (l.status || "active") === "active").length;
@@ -95,7 +133,7 @@ function FarmerDashboardView({
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-soft-sage text-fresh-leaf text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-fresh-leaf animate-pulse" />
-              <span>Harvest Season Q1 Active • Direct Farm-Gate Escrow</span>
+              <span>Harvest Season Q1 Active • Direct Farm-Gate Sourcing</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal-text tracking-tight">
               Welcome Back, {user?.firstName || "Farmer"} 👋
@@ -184,14 +222,14 @@ function FarmerDashboardView({
 
         <div className="bg-pure-white border border-border-gray/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-natural-gray mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Escrow Security</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider">Trade Security</span>
             <div className="w-8 h-8 rounded-lg bg-soft-sage flex items-center justify-center text-fresh-leaf">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
           <div>
             <h3 className="text-2xl font-extrabold text-charcoal-text">Secured</h3>
-            <p className="text-xs text-natural-gray mt-1 font-medium">Funds held in neutral escrow until sign-off</p>
+            <p className="text-xs text-natural-gray mt-1 font-medium">Funds secured until delivery sign-off</p>
           </div>
           <div className="mt-4 pt-3 border-t border-border-gray/50 flex items-center justify-between text-xs">
             <span className="text-deep-forest font-bold">CBN &amp; FMARD Standards</span>
@@ -472,8 +510,8 @@ function FarmerDashboardView({
 // ==========================================
 // 2. BUYER DASHBOARD VIEW (BROWSE & INQUIRE)
 // ==========================================
-function BuyerDashboardView({ user }: { user: any }) {
-  const [marketListings, setMarketListings] = useState<any[]>([]);
+function BuyerDashboardView({ user }: { user: DashboardUserItem | null }) {
+  const [marketListings, setMarketListings] = useState<DashboardListingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
@@ -517,7 +555,7 @@ function BuyerDashboardView({ user }: { user: any }) {
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-soft-sage text-fresh-leaf text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-fresh-leaf animate-pulse" />
-              <span>Commercial Procurement Active • Direct Farm-Gate Escrow</span>
+              <span>Commercial Procurement Active • Direct Farm-Gate Sourcing</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal-text tracking-tight">
               Good day, {user?.firstName || "Procurement Buyer"} 👋
@@ -530,7 +568,7 @@ function BuyerDashboardView({ user }: { user: any }) {
               <span className="capitalize font-semibold text-deep-forest">Wholesale Buyer / Mill Account</span>
               <span>•</span>
               <span className="inline-flex items-center gap-1 text-fresh-leaf font-semibold bg-soft-sage px-2 py-0.5 rounded text-xs">
-                <ShieldCheck className="w-3.5 h-3.5" /> Escrow Protected Trader
+                <ShieldCheck className="w-3.5 h-3.5" /> Verified Trader
               </span>
             </p>
           </div>
@@ -607,14 +645,14 @@ function BuyerDashboardView({ user }: { user: any }) {
 
         <div className="bg-pure-white border border-border-gray/80 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-natural-gray mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Escrow Protection</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider">Payment Protection</span>
             <div className="w-8 h-8 rounded-lg bg-soft-sage flex items-center justify-center text-fresh-leaf">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
           <div>
             <h3 className="text-2xl font-extrabold text-charcoal-text">100% Guarded</h3>
-            <p className="text-xs text-natural-gray mt-1 font-medium">Funds held in neutral escrow until sign-off</p>
+            <p className="text-xs text-natural-gray mt-1 font-medium">Funds secured until delivery sign-off</p>
           </div>
           <div className="mt-4 pt-3 border-t border-border-gray/50 flex items-center justify-between text-xs">
             <span className="text-deep-forest font-bold">CBN &amp; FMARD Standards</span>
@@ -672,7 +710,7 @@ function BuyerDashboardView({ user }: { user: any }) {
               const farmerFullName = farmer?.user
                 ? `${farmer.user.firstName} ${farmer.user.lastName}`
                 : "Verified Farmer";
-              const rawPhone = farmer?.user?.phoneNumber || farmer?.phoneNumber || "08000000000";
+              const rawPhone = farmer?.user?.phoneNumber || (farmer as unknown as { phoneNumber?: string })?.phoneNumber || "08000000000";
               const whatsappPhone = rawPhone.startsWith("0") ? `234${rawPhone.slice(1)}` : rawPhone;
               const imageUrl = getImageUrl(item.image || item.product?.image);
 
@@ -785,7 +823,7 @@ function BuyerDashboardView({ user }: { user: any }) {
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const [personalListings, setPersonalListings] = useState<any[]>([]);
+  const [personalListings, setPersonalListings] = useState<DashboardListingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
@@ -798,9 +836,7 @@ export default function DashboardPage() {
 
   const isFarmer = (user?.role || "").toLowerCase() === "farmer";
 
-  const loadPersonalListings = async () => {
-    if (!isFarmer) return;
-    setLoading(true);
+    const loadPersonalListings = useCallback(async () => {
     setActionError(null);
     try {
       const res = await listingService.getPersonalListings();
@@ -811,19 +847,26 @@ export default function DashboardPage() {
       } else {
         setPersonalListings([]);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to load personal listings", err);
       setActionError("Could not load your listings from the marketplace.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (isAuthenticated && isFarmer) {
-      loadPersonalListings();
+    let ignore = false;
+    async function init() {
+      if (isAuthenticated && isFarmer && !ignore) {
+        await loadPersonalListings();
+      }
     }
-  }, [isAuthenticated, isFarmer]);
+    void init();
+    return () => {
+      ignore = true;
+    };
+  }, [isAuthenticated, isFarmer, loadPersonalListings]);
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to permanently delete this produce listing?")) {

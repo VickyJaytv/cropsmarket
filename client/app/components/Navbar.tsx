@@ -13,7 +13,7 @@ import {
   LayoutDashboard,
   PlusCircle,
   Boxes,
-  Store,
+  
   UserPlus,
 } from "lucide-react";
 

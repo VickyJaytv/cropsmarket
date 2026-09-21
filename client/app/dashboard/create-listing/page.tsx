@@ -164,12 +164,13 @@ export default function CreateListingPage() {
       } else {
         setErrorMessage(res.message || "Failed to create listing.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Listing creation error:", err);
-      const serverMsg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "An error occurred while creating the listing.";
+      const errorObj = err as { response?: { data?: { message?: string | string[]; error?: string } } };
+      const rawMsg = errorObj?.response?.data?.message;
+      const serverMsg = Array.isArray(rawMsg)
+        ? rawMsg.join(", ")
+        : (typeof rawMsg === "string" ? rawMsg : errorObj?.response?.data?.error || "An error occurred while creating the listing.");
       setErrorMessage(serverMsg);
     } finally {
       setSubmitting(false);

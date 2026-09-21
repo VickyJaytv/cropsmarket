@@ -7,13 +7,13 @@ import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import {
   Sprout,
-  ArrowLeft,
+  
   Home,
   Store,
   LayoutDashboard,
-  HelpCircle,
+  
   ShieldCheck,
-  Search,
+  
 } from "lucide-react";
 
 export default function NotFound() {

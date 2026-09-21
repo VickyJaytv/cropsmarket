@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
-import { getImageUrl } from "@/app/utils/image";
+import { getImageUrl } from "@/app/utils/imageUtils";
 
 interface Category {
   id: number;
@@ -115,25 +115,28 @@ function BrowseProduceContent() {
 
   // Fetch Categories from Backend
   useEffect(() => {
+    let ignore = false;
     async function loadCategories() {
       try {
         const res = await fetch("http://localhost:8090/api/v1/categories");
-        if (res.ok) {
+        if (res.ok && !ignore) {
           const result = await res.json();
-          if (result.status === "success" && Array.isArray(result.data)) {
+          if ((result.success || result.status === "success") && Array.isArray(result.data)) {
             setCategories(result.data);
           }
         }
-      } catch (e) {
+      } catch (e: unknown) {
         console.error("Failed to load categories:", e);
       }
     }
     loadCategories();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   // Fetch Listings with Filters from Backend
   const fetchListings = useCallback(async () => {
-    setLoading(true);
     try {
       const params = new URLSearchParams();
       params.append("page", currentPage.toString());
@@ -161,7 +164,7 @@ function BrowseProduceContent() {
       const res = await fetch(`http://localhost:8090/api/v1/listings?${params.toString()}`);
       if (res.ok) {
         const json = await res.json();
-        if (json.status === "success" && json.data) {
+        if ((json.success || json.status === "success") && json.data) {
           const items = Array.isArray(json.data.listings) ? json.data.listings : [];
           setListings(items);
           setTotalCount(json.data.pagination?.total || items.length);
@@ -176,7 +179,16 @@ function BrowseProduceContent() {
   }, [currentPage, selectedCategory, selectedState, searchTerm, minPrice, maxPrice, sortBy, sortOrder]);
 
   useEffect(() => {
-    fetchListings();
+    let ignore = false;
+    async function execute() {
+      if (!ignore) {
+        await fetchListings();
+      }
+    }
+    execute();
+    return () => {
+      ignore = true;
+    };
   }, [fetchListings]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -212,7 +224,7 @@ function BrowseProduceContent() {
                 Browse Agricultural Produce
               </h1>
               <p className="text-xs sm:text-sm text-natural-gray max-w-2xl leading-relaxed">
-                Connect directly with verified local farmers across 36 states. Wholesale and retail farm-gate prices with zero middlemen markups and verified escrow security.
+                Connect directly with verified local farmers across 36 states. Wholesale and retail farm-gate prices with zero middlemen markups and verified trade security.
               </p>
             </div>
 
@@ -525,14 +537,14 @@ function BrowseProduceContent() {
                 </button>
               </div>
 
-              {/* Escrow Assurance Panel */}
+              {/* Trade Assurance Panel */}
               <div className="p-4 rounded-xl bg-soft-sage/70 border border-border-gray/60 space-y-2">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-deep-forest">
                   <ShieldCheck className="w-4 h-4 text-fresh-leaf" />
-                  <span>CropsMarket Escrow</span>
+                  <span>CropsMarket Assurance</span>
                 </div>
                 <p className="text-[11px] text-natural-gray leading-relaxed">
-                  Every order is protected by institutional escrow. Payments are released only when quality specifications are inspected and confirmed.
+                  Every order is protected by institutional verification. Payments are released only when quality specifications are inspected and confirmed.
                 </p>
               </div>
             </aside>

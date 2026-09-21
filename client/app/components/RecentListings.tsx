@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { listingService } from "../services/listing.service";
 import { ProduceListing } from "../store/useListingStore";
 import { getImageUrl } from "../utils/imageUtils";

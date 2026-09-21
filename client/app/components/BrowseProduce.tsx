@@ -1,78 +1,101 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { MapPin, ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, MapPin } from "lucide-react";
 import { listingService } from "../services/listing.service";
-import { productService } from "../services/product.service";
-import { ProduceListing } from "../store/useListingStore";
+import { categoryService } from "../services/product.service";
 import { getImageUrl } from "../utils/imageUtils";
+
+interface CategoryData {
+  id: number;
+  name: string;
+}
+
+interface ListingData {
+  id: number;
+  quantity: number;
+  unit: string | number;
+  price: number;
+  description?: string;
+  location?: string;
+  image?: string;
+  productName?: string;
+  categoryName?: string;
+  product?: {
+    id: number;
+    name: string;
+    image?: string;
+    category?: {
+      id: number;
+      name: string;
+    };
+  };
+  farmer?: {
+    id: number;
+    farmName?: string;
+    state?: string;
+    lga?: string;
+  };
+}
 
 export default function BrowseProduce() {
   const [categories, setCategories] = useState<string[]>(["All"]);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [listings, setListings] = useState<ProduceListing[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [listings, setListings] = useState<ListingData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    async function loadCategories() {
+    async function fetchCategories() {
       try {
-        const res = await productService.getCategories();
+        const res = await categoryService.getAllCategories();
         if (res.success && Array.isArray(res.data)) {
-          setCategories(["All", ...res.data.map((c: any) => c.name)]);
+          const names = res.data.map((c: CategoryData) => c.name);
+          setCategories(["All", ...names]);
         }
-      } catch (err) {
-        console.error("Failed to load categories:", err);
+      } catch (err: unknown) {
+        console.error("Failed to fetch categories", err);
       }
     }
-    loadCategories();
+    fetchCategories();
   }, []);
 
   useEffect(() => {
     async function fetchListings() {
       setLoading(true);
       try {
-        const params: any = { limit: 8 };
+        const params: Record<string, string> = { limit: "8" };
         if (selectedCategory !== "All") {
           params.category = selectedCategory;
         }
         const res = await listingService.getAllListings(params);
         if (res.success && Array.isArray(res.data?.listings)) {
           setListings(res.data.listings);
-        } else if (Array.isArray(res.data)) {
-          setListings(res.data);
         } else {
           setListings([]);
         }
-      } catch (err) {
-        console.error("Failed to fetch produce listings:", err);
-        setListings([]);
+      } catch (err: unknown) {
+        console.error("Failed to fetch produce listings", err);
       } finally {
         setLoading(false);
       }
     }
-
     fetchListings();
   }, [selectedCategory]);
 
   return (
-    <section
-      id="browse-produce"
-      className="w-full max-w-7xl mx-auto px-4 md:px-8 mb-20 scroll-mt-24"
-    >
-      {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-border-gray/70 gap-4">
+    <section className="my-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-soft-sage text-deep-forest text-xs font-bold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-fresh-leaf" />
-            <span>Farm-Gate Produce</span>
-          </div>
+          <span className="text-xs font-bold text-fresh-leaf uppercase tracking-wider block mb-1">
+            Live Produce Marketplace
+          </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-charcoal-text tracking-tight">
-            Featured Harvest Listings
+            Fresh Farm-Gate Harvests
           </h2>
           <p className="text-xs sm:text-sm text-natural-gray mt-1">
-            Browse verified wholesale crops available directly from local farms.
+            Directly sourced wholesale commodities with verified origin and certified agronomic grading.
           </p>
         </div>
 
